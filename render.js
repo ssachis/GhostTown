@@ -940,7 +940,14 @@
     c.beginPath(); c.moveTo(x - 4.5, yy); c.lineTo(x + 4.5, yy); c.lineTo(x, yy + 5.5); c.closePath(); c.fill();
   }
 
-  function drawPlayer(c, p, t, isMe) { p.role === 'boy' ? drawBoy(c, p, t, isMe) : drawGhost(c, p, t, isMe); }
+  function drawPlayer(c, p, t, isMe) {
+    if (p.role === 'boy') return drawBoy(c, p, t, isMe);
+    // Keep the ghost's visual center anchored while reducing its size by 5%.
+    const cx = p.x + PW / 2, cy = p.y + PH / 2;
+    c.save(); c.translate(cx, cy); c.scale(0.95, 0.95); c.translate(-cx, -cy);
+    drawGhost(c, p, t, isMe);
+    c.restore();
+  }
 
 
   // ---------- sprites cut from the GhostTown design sheets (assets/) ----------
