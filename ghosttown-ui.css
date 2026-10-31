@@ -156,3 +156,7 @@ body{font-family:var(--f-body)}
 #title .title-actions{margin-top:24px}
 @media(max-width:450px){#title .game-logo{margin-bottom:-23px}#title .game-logo .logo-ghost{font-size:clamp(55px,15vw,76px)}#title .game-logo .logo-town{font-size:clamp(52px,14vw,72px)}#title .title-actions{margin-top:20px}}
 @media(max-height:680px){#title .game-logo .logo-ghost{font-size:54px}#title .game-logo .logo-town{font-size:51px}#title .game-logo{margin-bottom:-19px}#title .title-actions{margin-top:12px}}
+
+/* V6 — quiet welcome line, subordinate to the game title */
+#title .game-logo .logo-welcome{display:block;font:700 clamp(13px,2.6vw,17px)/1.1 var(--f-body);letter-spacing:4px;text-transform:uppercase;color:#f3dba7;text-shadow:0 2px 8px #1a0c39;transform:rotate(2deg);margin:0 0 13px;white-space:nowrap}
+@media(max-height:680px){#title .game-logo .logo-welcome{font-size:12px;letter-spacing:3px;margin-bottom:8px}}
