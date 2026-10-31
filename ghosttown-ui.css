@@ -222,3 +222,21 @@ body{font-family:var(--f-body)}
   41%,43%{transform:scaleY(1)}
 }
 @media(prefers-reduced-motion:reduce){#title .logo-ghost-icon i{animation:none!important}}
+
+
+/* V12 — compact shallow arc, with lettering that belongs to the logo. */
+#title .game-logo{padding-top:67px}
+#title .game-logo .logo-welcome{top:13px;left:50%;width:230px;height:53px;font:800 27px/1 'Fredoka',sans-serif;transform:translateX(-50%) rotate(-5deg);text-shadow:0 2px 0 #69477d,0 4px 0 #44275f,0 6px 10px #100726}
+#title .logo-welcome>span{left:auto;top:auto;width:27px;height:30px;transform-origin:center center;padding:0}
+#title .logo-welcome>span:nth-child(1){left:0;top:21px;transform:rotate(-20deg)}
+#title .logo-welcome>span:nth-child(2){left:23px;top:12px;transform:rotate(-15deg)}
+#title .logo-welcome>span:nth-child(3){left:46px;top:6px;transform:rotate(-10deg)}
+#title .logo-welcome>span:nth-child(4){left:67px;top:2px;transform:rotate(-5deg)}
+#title .logo-welcome>span:nth-child(5){left:91px;top:0;transform:rotate(0deg)}
+#title .logo-welcome>span:nth-child(6){left:117px;top:2px;transform:rotate(5deg)}
+#title .logo-welcome>span:nth-child(7){left:144px;top:7px;transform:rotate(10deg)}
+#title .logo-welcome>span:nth-child(8){display:none}
+#title .logo-welcome>span:nth-child(9){left:182px;top:15px;transform:rotate(16deg)}
+#title .logo-welcome>span:nth-child(10){left:207px;top:22px;transform:rotate(21deg)}
+@media(max-width:450px){#title .game-logo{padding-top:62px}#title .game-logo .logo-welcome{top:12px;width:230px;height:53px;font-size:27px}}
+@media(max-height:680px){#title .game-logo{padding-top:60px}#title .game-logo .logo-welcome{top:8px;font-size:26px;height:53px}}
