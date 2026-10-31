@@ -66,6 +66,8 @@
     }
     foliage(g, 0, 2, 1);
     foliage(g, W, 2, -1);
+    foliage(g, 0, H - 2, 1, true);
+    foliage(g, W, H - 2, -1, true);
     return cv;
   }
 
@@ -163,23 +165,34 @@
     }
   }
 
-  // autumn leaves framing the top corners
-  function foliage(g, x0, y0, dir) {
-    const cols = ['#e8742a', '#c9461f', '#f2a03d', '#d8582a'];
-    g.strokeStyle = '#4a2c22'; g.lineWidth = 2.5;
-    g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo(x0 + dir * 50, y0 + 10, x0 + dir * 110, y0 + 4); g.stroke();
-    g.lineWidth = 1.5;
-    g.beginPath(); g.moveTo(x0 + dir * 40, y0 + 8); g.quadraticCurveTo(x0 + dir * 55, y0 + 25, x0 + dir * 70, y0 + 34); g.stroke();
-    for (let i = 0; i < 26; i++) {
-      const n = hash(i, dir + 5), m = hash(i * 3, dir + 9);
-      const lx = x0 + dir * (6 + n * 112), ly = y0 + 2 + m * 30 * (1 - n * 0.5);
-      g.save(); g.translate(lx, ly); g.rotate(n * 6);
-      g.fillStyle = cols[i % 4];
-      g.beginPath(); g.moveTo(0, -5); g.quadraticCurveTo(5, -2, 0, 6); g.quadraticCurveTo(-5, -2, 0, -5); g.fill();
-      g.strokeStyle = 'rgba(80,30,10,.35)'; g.lineWidth = 0.6; g.beginPath(); g.moveTo(0, -4); g.lineTo(0, 5); g.stroke();
-      g.restore();
+  // autumn maple foliage framing the corners (like the level mockup)
+  function maple(g, x, y, r, rot, col) {
+    g.save(); g.translate(x, y); g.rotate(rot); g.fillStyle = col;
+    g.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const a = -Math.PI / 2 + (i - 2) * 0.62, a2 = a + 0.31;
+      g.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+      g.lineTo(Math.cos(a2) * r * 0.45, Math.sin(a2) * r * 0.45);
+    }
+    g.lineTo(0, r * 0.35); g.closePath(); g.fill();
+    g.strokeStyle = 'rgba(90,30,10,.35)'; g.lineWidth = 0.6;
+    g.beginPath(); g.moveTo(0, r * 0.35); g.lineTo(0, -r * 0.8); g.stroke();
+    g.restore();
+  }
+  function foliage(g, x0, y0, dir, down) {
+    const cols = ['#ff8a1f', '#e8611c', '#ffb43c', '#c9461f', '#ffc93c'];
+    const vy = down ? -1 : 1;
+    g.strokeStyle = '#4a2c22'; g.lineWidth = 3; g.lineCap = 'round';
+    g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo(x0 + dir * 60, y0 + vy * (down ? 6 : 16), x0 + dir * 130, y0 + vy * (down ? 4 : 8)); g.stroke();
+    g.lineWidth = 1.8;
+    if (!down) { g.beginPath(); g.moveTo(x0 + dir * 50, y0 + vy * 12); g.quadraticCurveTo(x0 + dir * 70, y0 + vy * 34, x0 + dir * 84, y0 + vy * 46); g.stroke(); }
+    for (let i = 0; i < 34; i++) {
+      const n = hash(i, dir + 5 + (down ? 40 : 0)), m = hash(i * 3, dir + 9 + (down ? 40 : 0));
+      const lx = x0 + dir * (4 + n * 132), ly = y0 + vy * (2 + m * (down ? 16 : 44) * (1 - n * 0.55));
+      maple(g, lx, ly, 5 + hash(i, 7) * 4, n * 6, cols[i % 5]);
     }
   }
+
 
   // chunky lavender blocks like the sheets: rounded, lit from the top-left,
   // dark mortar; inner walls are dimmer so the walkable surfaces stand out
@@ -237,6 +250,16 @@
         const dx = x + 3 + n * 34, len = 3 + n * 7;
         g.fillStyle = '#5d7d22'; rr(g, dx, y + 2, 2.6, len, 1.3); g.fill();
         g.fillStyle = '#7d9e2c'; g.beginPath(); g.arc(dx + 1.3, y + 2 + len, 1.5, 0, 7); g.fill();
+      }
+    }
+    if (hash(c * 7, r * 5) < 0.12) {       // yellow-green leaf tuft
+      const tx = x + 4 + hash(c, r * 2) * 16;
+      for (let k = 0; k < 5; k++) {
+        const a = -Math.PI / 2 + (k - 2) * 0.45;
+        g.save(); g.translate(tx, y + 1); g.rotate(a + Math.PI / 2);
+        g.fillStyle = k % 2 ? '#c6d43e' : '#9fbf2e';
+        g.beginPath(); g.ellipse(0, -6, 2.2, 6, 0, 0, 7); g.fill();
+        g.restore();
       }
     }
     if (hash(c, r * 13) < 0.13 && solid(c, r + 1)) {

@@ -424,9 +424,9 @@
     const cx = LW / 2, cy = 150;
     ctx.fillStyle = 'rgba(30,20,62,.82)'; ctx.strokeStyle = '#6e5ab6'; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.roundRect(cx - 170, cy - 48, 340, 86, 20); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#f5c56b'; ctx.font = '600 15px Fredoka, sans-serif';
+    ctx.fillStyle = '#f5c56b'; ctx.font = '700 15px Fredoka, sans-serif';
     ctx.fillText('✦  Level ' + (w.levelIndex + 1) + '  ✦', cx, cy - 20);
-    ctx.font = '400 30px Pacifico, cursive'; ctx.fillStyle = '#fff7ea';
+    ctx.font = '400 34px "Bubblegum Sans", Fredoka, cursive'; ctx.fillStyle = '#fff7ea';
     ctx.shadowColor = '#a77bff'; ctx.shadowBlur = 16;
     ctx.fillText(w.name, cx, cy + 20);
     ctx.restore();
@@ -452,13 +452,13 @@
   function overlay(title, sub, color) {
     ctx.fillStyle = 'rgba(12,6,32,.68)'; ctx.fillRect(0, 0, LW, LH);
     ctx.textAlign = 'center';
-    ctx.font = '400 44px Pacifico, cursive';
+    ctx.font = '400 50px "Bubblegum Sans", Fredoka, cursive';
     ctx.fillStyle = color || '#f3e9ff';
     ctx.shadowColor = color || '#a77bff'; ctx.shadowBlur = 18;
     ctx.fillText(title, LW / 2, LH / 2 - 6);
     ctx.shadowBlur = 0;
     if (sub) {
-      ctx.fillStyle = '#d6cbef'; ctx.font = '600 19px Fredoka, sans-serif';
+      ctx.fillStyle = '#d6cbef'; ctx.font = '600 20px "Baloo 2", Fredoka, sans-serif';
       sub.split('\n').forEach((line, i) => ctx.fillText(line, LW / 2, LH / 2 + 34 + i * 26));
     }
   }
@@ -489,9 +489,8 @@
       const [msg, col] = DEATH[w.deadCause] || ['Oops!', '#fff'];
       overlay(msg, 'Trying again…', col);
     } else if (w.status === 'won') {
-      const secs = Math.floor(w.ticks / 60);
       const got = w.gems.filter((g) => g.taken).length;
-      overlay('Level cleared!', `Time ${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}   ·   Treats ${got}/${w.gems.length}\nPress R to play again`, '#ffd27a');
+      overlay('Level cleared!', `Treats ${got}/${w.gems.length}\nPress R to play again`, '#ffd27a');
     }
   }
 })();

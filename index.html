@@ -6,8 +6,8 @@
   <title>GhostTown</title>
   <meta name="description" content="A spooky two-player co-op platformer: Andy and his ghost. Play online across two laptops or together on one.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Marcellus&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261031e">
+  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Fredoka:wght@500;600;700&family=Baloo+2:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=20261031f">
 </head>
 <body>
   <!-- Lobby: full-screen title screen over the painted night sky -->
@@ -24,9 +24,9 @@
         </div>
       </div>
       <div class="col right">
-        <button id="create" class="cta orange">Create room</button>
+        <button id="create" class="cta yellow">Create room</button>
         <div class="divider"><span>or</span></div>
-        <button id="local" class="cta blue">Play on one screen</button>
+        <button id="local" class="cta purple">Play on one screen</button>
         <div class="divider wide"><span>or join a friend</span></div>
         <div class="join">
           <input id="code" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false">
@@ -81,7 +81,7 @@
     <!-- minimal toolbar: time, pause, music, instructions -->
     <div class="side right">
       <div class="toolbar">
-        <div class="mini-time" id="hud-time">0:00</div>
+        <div class="mini-time" id="hud-time" hidden>0:00</div>
         <button id="pause" class="tool" title="Pause (Esc)">❚❚</button>
         <button id="music" class="tool" title="Music (M)">♪</button>
         <button id="help-btn" class="tool" title="Instructions (H)">?</button>
@@ -90,9 +90,9 @@
   </section>
 
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-  <script src="shared/game.js?v=20261031e"></script>
-  <script src="audio.js?v=20261031e"></script>
-  <script src="render.js?v=20261031e"></script>
-  <script src="client.js?v=20261031e"></script>
+  <script src="shared/game.js?v=20261031f"></script>
+  <script src="audio.js?v=20261031f"></script>
+  <script src="render.js?v=20261031f"></script>
+  <script src="client.js?v=20261031f"></script>
 </body>
 </html>
