@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261031p">
-  <link rel="stylesheet" href="ghosttown-ui.css?v=1">
+  <link rel="stylesheet" href="ghosttown-ui.css?v=2">
 </head>
 <body>
   <!-- Title screen: the GhostTown key art, brought to life -->
@@ -17,9 +17,11 @@
       <img class="title-art" id="title-art" src="assets/title.jpg" alt="GhostTown: Andy and his ghost in the haunted ruins">
       <canvas id="title-fx" aria-hidden="true"></canvas>
     </div>
+    <div class="title-edition">✦ A little spooky. A lot of teamwork. ✦</div>
     <div class="title-actions">
       <button id="play-game" class="cta yellow">Play Game</button>
       <button id="how-to" class="cta purple">How to Play</button>
+      <p class="title-footnote">Two unlikely heroes · One magical adventure</p>
     </div>
 
     <div id="howto" class="modal" hidden>
@@ -56,23 +58,26 @@
     <canvas id="bg" aria-hidden="true"></canvas>
     <button id="back" class="back-btn" title="Back to title">← Back</button>
     <div class="panel">
+      <header class="lobby-header"><span class="eyebrow">WELCOME TO GHOSTTOWN</span><h2>Adventure is better together<span class="lobby-sparkle"> ✦</span></h2><p>Pick your character, then choose how you want to play.</p></header>
       <div class="col left">
-        <div class="chip">Choose your hero</div>
+        <div class="chip">01 · Choose your hero</div>
         <div class="pick">
-          <button class="char boy selected" data-role="boy"><canvas width="240" height="208"></canvas><span>Andy</span><small>loves candy</small></button>
-          <button class="char ghost" data-role="ghost"><canvas width="240" height="208"></canvas><span>His Ghost</span><small>loves pumpkins</small></button>
+          <button class="char boy selected" data-role="boy"><canvas width="240" height="208"></canvas><span>Andy</span><small>🍬 Candy collector</small></button>
+          <button class="char ghost" data-role="ghost"><canvas width="240" height="208"></canvas><span>His Ghost</span><small>🎃 Pumpkin hunter</small></button>
         </div>
       </div>
       <div class="col right">
-        <button id="create" class="cta yellow">Create room</button>
+        <div class="chip">02 · Play your way</div>
+        <div class="mode-caption">Invite a friend online</div>
+        <button id="create" class="cta yellow">✦ Create a Room</button>
         <div class="divider"><span>or</span></div>
-        <button id="local" class="cta purple">Single Screen</button>
-        <div class="divider wide"><span>or join a friend</span></div>
+        <button id="local" class="cta purple">⌘ Play Together Here</button>
+        <div class="divider wide"><span>Have a room code?</span></div>
         <div class="join">
           <input id="code" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false">
-          <button id="join" class="cta ghostbtn">Join</button>
+          <button id="join" class="cta ghostbtn">Join →</button>
         </div>
-        <p id="lobby-err" class="err"></p>
+        <p id="lobby-err" class="err" role="status" aria-live="polite"></p>
       </div>
     </div>
   </section>
