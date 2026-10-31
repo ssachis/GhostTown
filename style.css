@@ -10,6 +10,7 @@
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; }
+html, body { height: 100%; overflow: hidden; }
 body {
   background:
     radial-gradient(circle at 85% 8%, rgba(255,240,200,.12) 0, transparent 22%),
@@ -17,29 +18,40 @@ body {
   color: var(--text);
   font-family: Fredoka, system-ui, sans-serif;
   display: flex; align-items: center; justify-content: center;
-  min-height: 100vh; padding: 16px;
+  min-height: 100vh; min-height: 100dvh; padding: 12px 16px;
 }
 [hidden] { display: none !important; }
 button { font-family: inherit; }
 
 /* ---------- lobby (styled after the GhostTown sheets) ---------- */
 .panel {
-  width: min(470px, 100%);
-  background: linear-gradient(180deg, rgba(48,34,92,.96), rgba(30,21,62,.96));
+  position: relative; z-index: 1;
+  width: min(900px, 100%);
+  max-height: calc(100dvh - 24px);
+  display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(16px, 3vw, 40px); align-items: center;
+  background: linear-gradient(180deg, rgba(48,34,92,.86), rgba(30,21,62,.9));
   border: 2px solid #5f4ca3;
-  border-radius: 22px;
-  padding: 26px 30px 24px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.6), 0 0 70px rgba(150,110,255,.16), inset 0 1px 0 rgba(255,255,255,.08);
+  border-radius: 24px;
+  padding: clamp(16px, 3.4vh, 34px) clamp(18px, 3vw, 38px);
+  box-shadow: 0 24px 70px rgba(0,0,0,.55), 0 0 70px rgba(150,110,255,.2), inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter: blur(6px);
   text-align: center;
 }
+#lobby { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 12px 16px; }
+#lobby[hidden] { display: none !important; }
+#bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+#lobby::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(8,4,24,.55) 100%); }
+.col { display: flex; flex-direction: column; align-items: stretch; min-width: 0; }
+.col.left { align-items: center; }
 h1 {
-  font-family: Pacifico, cursive; font-weight: 400; font-size: 56px; line-height: 1.2; margin: 0;
+  font-family: Pacifico, cursive; font-weight: 400; font-size: clamp(40px, 7vh, 60px); line-height: 1.35; margin: 0 0 2px;
   color: #fff7ea; letter-spacing: 0;
   text-shadow: 0 0 6px rgba(255,230,190,.6), 0 0 18px rgba(167,123,255,.85), 0 0 42px rgba(130,80,255,.55);
 }
 h1 .o { width: 30px; height: 33px; vertical-align: 0; margin: 0 1px; filter: drop-shadow(0 0 8px rgba(180,200,255,.8)); }
 h1 span { margin-left: 8px; }
-.sub { font-family: Marcellus, Georgia, serif; color: #cbbdf0; margin: 4px 0 18px; font-size: 16px; }
+.sub { font-family: Marcellus, Georgia, serif; color: #cbbdf0; margin: 0 0 clamp(10px, 2.2vh, 20px); font-size: 16px; }
 .chip {
   display: inline-flex; align-items: center; gap: 8px;
   font-family: Marcellus, Georgia, serif; font-size: 15px; color: #f3ecff;
@@ -49,7 +61,8 @@ h1 span { margin-left: 8px; }
   margin-bottom: 12px;
 }
 .chip::before { content: '✦'; color: #f5c56b; text-shadow: 0 0 8px rgba(245,197,107,.7); font-size: 13px; }
-.pick { display: flex; gap: 14px; justify-content: center; margin-bottom: 20px; }
+.pick { display: flex; gap: 14px; justify-content: center; }
+.char canvas { width: clamp(92px, 14vh, 120px); height: auto; aspect-ratio: 240 / 208; }
 .char {
   background: radial-gradient(circle at 50% 35%, #2c2058, #171030);
   border: 2px solid #4e3d86; border-radius: 16px;
@@ -104,7 +117,7 @@ h1 span { margin-left: 8px; }
 .err { color: #ffb08a; min-height: 20px; font-size: 14px; margin: 12px 0 0; font-family: Marcellus, Georgia, serif; }
 
 /* ---------- game ---------- */
-#game { width: min(920px, 100%); }
+#game { width: min(1100px, 100%, calc((100dvh - 120px) * 816 / 600)); }
 .hud {
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px;
   margin-bottom: 10px; font-size: 14px;
@@ -147,6 +160,10 @@ h1 span { margin-left: 8px; }
 kbd {
   background: #251a3e; border: 1px solid var(--edge); border-bottom-width: 2px; border-radius: 4px;
   padding: 1px 6px; font: 600 12px Fredoka, sans-serif; color: var(--text); margin: 0 1px;
+}
+@media (max-width: 760px) {
+  .panel { grid-template-columns: 1fr; gap: 10px; overflow: auto; }
+  .col.right { width: min(420px, 100%); justify-self: center; }
 }
 @media (max-width: 640px) {
   .hud { grid-template-columns: 1fr 1fr; }

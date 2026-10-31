@@ -39,7 +39,7 @@ To test online mode on one machine, open two browser **windows** side by side. D
 ## Files
 - `index.html`, `style.css`: page and lobby
 - `client.js`: modes (same laptop / host / guest), networking, game loop
-- `render.js`: the art; the Boy's sprites in `assets/` are cut from the GhostTown design sheets, everything else is drawn with canvas shapes
+- `render.js`: the art. The characters, doors, lanterns, banners, candles, graves, buttons, lever, swing, treats, spiders and bats are sprites in `assets/`, cut from the GhostTown design sheets. Stone, moss, pools, gate and sky are painted with canvas to match.
 - `audio.js`: original music and sound effects, synthesized with Web Audio
 - `shared/game.js`: rules, physics and levels
 

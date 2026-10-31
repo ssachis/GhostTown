@@ -30,10 +30,12 @@
   }
 
   // ---------- static layer: sky, skyline, stone, vines, banners ----------
-  function buildStatic(w, W, H) {
+  function buildStatic(w, W, H, res) {
+    res = res || 1;
     const cv = document.createElement('canvas');
-    cv.width = W; cv.height = H;
+    cv.width = W * res; cv.height = H * res;
     const g = cv.getContext('2d');
+    g.scale(res, res);
     drawSky(g, W, H);
     const solid = (c, r) => r < 0 || r >= w.rows || c < 0 || c >= w.cols || w.grid[r][c] === '#';
     const empty = (c, r) => !solid(c, r) && !G.POOLS[(w.grid[r] || [])[c]];
@@ -62,54 +64,103 @@
       if (solid(c - 1, r) && hash(c, r * 7) < 0.6) cobweb(g, c * TILE, r * TILE, 1);
       else if (solid(c + 1, r) && hash(c * 3, r) < 0.6) cobweb(g, (c + 1) * TILE, r * TILE, -1);
     }
-    const d = w.decor || {};
-    (d.banners || []).forEach(([c, r]) => banner(g, c * TILE + 12, r * TILE));
-    (d.graves || []).forEach(([c, r]) => grave(g, c * TILE + 12, (r + 1) * TILE));
     foliage(g, 0, 2, 1);
     foliage(g, W, 2, -1);
     return cv;
   }
 
-  function drawSky(g, W, H) {
-    const sky = g.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, C.skyTop); sky.addColorStop(0.5, C.skyMid); sky.addColorStop(1, C.skyLow);
-    g.fillStyle = sky; g.fillRect(0, 0, W, H);
-    // a few calm stars
-    for (let i = 0; i < 45; i++) {
-      g.fillStyle = `rgba(255,255,255,${0.25 + hash(i, 1) * 0.5})`;
-      g.fillRect(hash(i, 2) * W, hash(i, 3) * H * 0.55, 1.5, 1.5);
-    }
-    // moon
-    const mx = W - 120, my = 88;
-    const glow = g.createRadialGradient(mx, my, 30, mx, my, 150);
-    glow.addColorStop(0, 'rgba(225,210,255,.35)'); glow.addColorStop(1, 'rgba(225,210,255,0)');
-    g.fillStyle = glow; g.fillRect(mx - 150, my - 150, 300, 300);
-    g.fillStyle = C.moon; g.beginPath(); g.arc(mx, my, 44, 0, 7); g.fill();
-    g.fillStyle = 'rgba(190,175,230,.35)';
-    [[-14, -8, 9], [12, 10, 7], [6, -18, 5], [-6, 16, 5]].forEach(([x, y, r]) => { g.beginPath(); g.arc(mx + x, my + y, r, 0, 7); g.fill(); });
-    // soft clouds
-    g.fillStyle = 'rgba(150,120,230,.13)';
-    [[160, 120, 120, 18], [520, 70, 150, 16], [mx - 40, my + 40, 130, 14]].forEach(([x, y, rx, ry]) => { g.beginPath(); g.ellipse(x, y, rx, ry, 0, 0, 7); g.fill(); });
-    // castle skyline (two calm layers)
-    skyline(g, W, H, C.far, 0.62, 11, true);
-    bridge(g, W, H);
-    skyline(g, W, H, C.near, 0.84, 23, false);
+  function blob(g, x, y, rx, ry, rgba) {
+    g.save(); g.translate(x, y); g.scale(1, ry / rx);
+    const gr = g.createRadialGradient(0, 0, 0, 0, 0, rx);
+    gr.addColorStop(0, rgba); gr.addColorStop(1, rgba.replace(/[\d.]+\)$/, '0)'));
+    g.fillStyle = gr; g.beginPath(); g.arc(0, 0, rx, 0, 7); g.fill();
+    g.restore();
   }
 
-  // arched stone bridge in the distance (from the parallax sheet)
+  function drawSky(g, W, H) {
+    const sky = g.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, '#191241'); sky.addColorStop(0.45, '#2f2474'); sky.addColorStop(0.8, '#4a379a'); sky.addColorStop(1, '#5a45aa');
+    g.fillStyle = sky; g.fillRect(0, 0, W, H);
+    for (let i = 0; i < 40; i++) {
+      const a = 0.25 + hash(i, 1) * 0.55, sx = hash(i, 2) * W, sy = hash(i, 3) * H * 0.5;
+      g.fillStyle = `rgba(255,250,235,${a})`;
+      g.beginPath(); g.arc(sx, sy, 0.6 + hash(i, 4) * 0.8, 0, 7); g.fill();
+    }
+    // moon with a soft halo, like the sheets
+    const mx = W - 150, my = 100;
+    blob(g, mx, my, 170, 170, 'rgba(200,180,255,.32)');
+    blob(g, mx, my, 80, 80, 'rgba(235,225,255,.35)');
+    const mg = g.createRadialGradient(mx - 14, my - 14, 6, mx, my, 48);
+    mg.addColorStop(0, '#fffaf2'); mg.addColorStop(0.7, '#ece4fb'); mg.addColorStop(1, '#d4c8f2');
+    g.fillStyle = mg; g.beginPath(); g.arc(mx, my, 46, 0, 7); g.fill();
+    [[-16, -6, 10, .16], [14, 12, 8, .14], [8, -20, 5, .12], [-6, 20, 6, .12], [22, -4, 4, .1]].forEach(([x, y, r, a]) => {
+      g.fillStyle = `rgba(150,130,200,${a})`; g.beginPath(); g.arc(mx + x, my + y, r, 0, 7); g.fill();
+    });
+    // wispy clouds
+    [[150, 130, 150, 20], [260, 118, 90, 14], [560, 74, 170, 18], [mx - 70, my + 46, 150, 16], [mx + 40, my + 58, 110, 12]]
+      .forEach(([x, y, rx, ry]) => blob(g, x, y, rx, ry, 'rgba(170,150,240,.22)'));
+    castleLayer(g, W, H);
+    bridge(g, W, H);
+    blob(g, W * 0.3, H * 0.8, W * 0.55, 70, 'rgba(150,120,235,.18)');
+    blob(g, W * 0.8, H * 0.82, W * 0.45, 60, 'rgba(150,120,235,.16)');
+    houses(g, W, H);
+  }
+
+  function windowGlow(g, x, y, w, h) {
+    blob(g, x + w / 2, y + h / 2, 9, 9, 'rgba(255,190,90,.35)');
+    g.fillStyle = '#ffcf73'; g.fillRect(x, y, w, h);
+    g.fillStyle = 'rgba(120,60,20,.5)'; g.fillRect(x + w / 2 - 0.4, y, 0.8, h); g.fillRect(x, y + h / 2 - 0.4, w, 0.8);
+  }
+
+  // far castle on the hill (hazy, lighter = further away)
+  function castleLayer(g, W, H) {
+    const base = H * 0.66, col = '#41338c';
+    g.fillStyle = col;
+    g.beginPath(); g.moveTo(0, H);
+    for (let x = 0; x <= W; x += 20) g.lineTo(x, base + Math.sin(x * 0.006) * 18 + Math.sin(x * 0.017) * 6);
+    g.lineTo(W, H); g.fill();
+    const towers = [[90, 70, 26], [140, 110, 34], [200, 60, 22], [420, 95, 28], [470, 140, 36], [530, 80, 24], [700, 70, 26]];
+    for (const [x, h, w] of towers) {
+      const y = base - h + Math.sin(x * 0.006) * 18;
+      g.fillStyle = col;
+      g.fillRect(x - w / 2, y, w, h + 30);
+      g.beginPath(); g.moveTo(x - w / 2 - 4, y); g.lineTo(x, y - w * 1.3); g.lineTo(x + w / 2 + 4, y); g.fill();
+      g.fillRect(x - 0.8, y - w * 1.3 - 9, 1.6, 9);
+      if (hash(x, 3) < 0.7) windowGlow(g, x - 2.5, y + 12, 5, 7);
+    }
+    g.fillStyle = col; g.fillRect(120, base - 60, 380, 70);
+    for (let x = 120; x < 500; x += 12) g.fillRect(x, base - 66, 7, 6);
+  }
+
+  // arched stone bridge (from the parallax sheet)
   function bridge(g, W, H) {
     const b = document.createElement('canvas'); b.width = W; b.height = H;
     const k = b.getContext('2d');
-    const top = H * 0.7;
-    k.fillStyle = '#271d5c'; k.fillRect(0, top, W, H - top);
-    k.fillStyle = '#2f246a'; k.fillRect(0, top - 6, W, 6);
-    for (let x = -20; x < W; x += 14) k.fillRect(x, top - 12, 7, 6);
+    const top = H * 0.72;
+    k.fillStyle = '#33287a'; k.fillRect(0, top, W, H - top);
+    k.fillStyle = '#3c2f88'; k.fillRect(0, top - 5, W, 5);
+    for (let x = -20; x < W; x += 16) k.fillRect(x, top - 11, 9, 6);
     k.globalCompositeOperation = 'destination-out';
-    const span = 120;
-    for (let x = 30; x < W; x += span) {
-      k.beginPath(); k.moveTo(x, H); k.lineTo(x, top + 64); k.arc(x + span / 2 - 12, top + 64, span / 2 - 12, Math.PI, 0); k.lineTo(x + span - 24, H); k.fill();
+    const span = 132;
+    for (let x = 24; x < W; x += span) {
+      const r = span / 2 - 14;
+      k.beginPath(); k.moveTo(x, H); k.lineTo(x, top + 34 + r); k.arc(x + r, top + 34 + r, r, Math.PI, 0); k.lineTo(x + 2 * r, H); k.fill();
     }
-    g.drawImage(b, 0, 0);
+    g.drawImage(b, 0, 0, W, H);
+  }
+
+  // near rooftops with a few warm windows
+  function houses(g, W, H) {
+    const col = '#261d5c';
+    let x = -10, i = 0;
+    while (x < W + 10) {
+      const bw = 46 + hash(i, 21) * 46, bh = 50 + hash(i, 22) * 60, top = H - bh;
+      g.fillStyle = col;
+      g.fillRect(x, top, bw, bh);
+      g.beginPath(); g.moveTo(x - 5, top); g.lineTo(x + bw * (0.35 + hash(i, 23) * 0.3), top - 22 - hash(i, 24) * 20); g.lineTo(x + bw + 5, top); g.fill();
+      if (hash(i, 25) < 0.55) windowGlow(g, x + 10 + hash(i, 26) * (bw - 26), top + 14, 6, 8);
+      x += bw + 2; i++;
+    }
   }
 
   // autumn leaves framing the top corners
@@ -130,88 +181,72 @@
     }
   }
 
-  function skyline(g, W, H, color, base, seed, castle) {
-    g.fillStyle = color;
-    let x = -10;
-    while (x < W + 10) {
-      const bw = 34 + hash(x, seed) * 50;
-      const bh = H * (1 - base) * (0.5 + hash(x, seed + 1) * 0.9);
-      const top = H - bh;
-      g.fillRect(x, top, bw, bh);
-      // pointed roof or tower
-      g.beginPath();
-      if (castle && hash(x, seed + 2) < 0.35) {
-        g.fillRect(x + bw * 0.3, top - 40, bw * 0.4, 40);
-        g.moveTo(x + bw * 0.25, top - 40); g.lineTo(x + bw * 0.5, top - 72); g.lineTo(x + bw * 0.75, top - 40);
-      } else {
-        g.moveTo(x - 3, top); g.lineTo(x + bw / 2, top - 16 - hash(x, seed + 3) * 18); g.lineTo(x + bw + 3, top);
-      }
-      g.fill();
-      // a few lit windows
-      g.fillStyle = C.window;
-      for (let i = 0; i < 3; i++) {
-        if (hash(x + i, seed + 4) < 0.45) g.fillRect(x + 6 + hash(x, i + seed) * (bw - 14), top + 10 + hash(i, x) * (bh * 0.4), 4, 6);
-      }
-      g.fillStyle = color;
-      x += bw + 4;
-    }
-  }
-
+  // chunky lavender blocks like the sheets: rounded, lit from the top-left,
+  // dark mortar; inner walls are dimmer so the walkable surfaces stand out
   function drawStone(g, w, c, r, solid, empty, top) {
     const x = c * TILE, y = r * TILE;
-    let exposed = false;
-    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (empty(c + dx, r + dy)) exposed = true;
+    let dist = 9;
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) if (empty(c + dx, r + dy)) dist = Math.min(dist, Math.max(Math.abs(dx), Math.abs(dy)));
+    const lit = dist <= 1 ? 1 : dist === 2 ? 0.55 : 0.25;
     g.save();
     g.beginPath(); g.rect(x, y + top, TILE, TILE - top); g.clip();
-    g.fillStyle = exposed ? C.mortar : C.mortarIn;
+    g.fillStyle = `hsl(256, 34%, ${18 + lit * 8}%)`;
     g.fillRect(x, y, TILE, TILE);
     for (let band = 0; band < 2; band++) {
-      const by = y + band * 12;
-      const k = r * 2 + band;
-      const off = (k % 2) * 12;
+      const by = y + band * 12, k = r * 2 + band, off = (k % 2) * 12;
       const start = x - ((((x - off) % 24) + 24) % 24);
       for (let bx = start; bx < x + TILE; bx += 24) {
-        const n = hash(bx, by);
-        const L = exposed ? 54 + n * 8 : 40 + n * 6;
-        g.fillStyle = `hsl(258, 32%, ${L}%)`;
-        rr(g, bx + 1, by + 1, 22, 10, 3); g.fill();
-        g.fillStyle = 'rgba(255,255,255,.16)'; g.fillRect(bx + 3, by + 1.5, 18, 1.5);
-        g.fillStyle = 'rgba(20,8,50,.18)'; g.fillRect(bx + 3, by + 9, 18, 1.5);
-        if (n > 0.86) { g.fillStyle = 'rgba(20,8,50,.25)'; g.fillRect(bx + 6 + n * 8, by + 4, 3, 1); }
+        const n = hash(bx, by), L = 34 + lit * 26 + (n - 0.5) * 7, S = 32 + lit * 10;
+        const gr = g.createLinearGradient(0, by + 1, 0, by + 11);
+        gr.addColorStop(0, `hsl(258, ${S}%, ${L + 7}%)`); gr.addColorStop(1, `hsl(258, ${S}%, ${L - 5}%)`);
+        g.fillStyle = gr; rr(g, bx + 1, by + 1, 22, 10.5, 3.2); g.fill();
+        g.fillStyle = `rgba(255,245,255,${0.1 + lit * 0.22})`; rr(g, bx + 2.5, by + 1.6, 16, 1.6, 0.8); g.fill();
+        g.fillStyle = 'rgba(25,10,60,.22)'; rr(g, bx + 3, by + 9.4, 19, 1.6, 0.8); g.fill();
+        if (lit > 0.5) {
+          g.fillStyle = 'rgba(40,20,90,.18)';
+          for (let q = 0; q < 3; q++) g.fillRect(bx + 4 + hash(bx + q, by) * 15, by + 3.5 + hash(by + q, bx) * 5, 1, 1);
+          if (n > 0.88) { g.strokeStyle = 'rgba(40,20,90,.3)'; g.lineWidth = 0.7; g.beginPath(); g.moveTo(bx + 6 + n * 6, by + 2); g.lineTo(bx + 9 + n * 6, by + 6); g.lineTo(bx + 8 + n * 6, by + 9); g.stroke(); }
+        }
       }
     }
     if (top === 0) {
+      if (empty(c, r - 1)) {   // lit top lip of a platform
+        const lip = g.createLinearGradient(0, y, 0, y + 5);
+        lip.addColorStop(0, 'rgba(235,225,255,.55)'); lip.addColorStop(1, 'rgba(235,225,255,0)');
+        g.fillStyle = lip; g.fillRect(x, y, TILE, 5);
+      }
       if (empty(c, r + 1)) { g.fillStyle = 'rgba(15,6,40,.45)'; g.fillRect(x, y + TILE - 3, TILE, 3); }
-      if (empty(c - 1, r)) { g.fillStyle = 'rgba(255,255,255,.08)'; g.fillRect(x, y, 2, TILE); }
+      if (empty(c - 1, r)) { g.fillStyle = 'rgba(255,255,255,.1)'; g.fillRect(x, y, 2, TILE); }
       if (empty(c + 1, r)) { g.fillStyle = 'rgba(15,6,40,.3)'; g.fillRect(x + TILE - 2, y, 2, TILE); }
     }
     g.restore();
   }
 
+  // olive moss clumps with drips, and the odd vine, like the sheets
   function drawMoss(g, c, r, solid) {
     const x = c * TILE, y = r * TILE;
-    g.fillStyle = C.moss; g.fillRect(x, y - 1, TILE, 4);
-    g.fillStyle = C.mossLight;
-    for (let i = 0; i < 4; i++) {
-      const n = hash(c * 5 + i, r);
-      g.beginPath(); g.arc(x + 3 + i * 6, y - 1, 1.8 + n * 1.6, Math.PI, 0); g.fill();
+    g.fillStyle = '#5d7d22'; g.fillRect(x, y - 0.5, TILE, 4.5);
+    for (let i = 0; i < 5; i++) {
+      const n = hash(c * 5 + i, r), cx = x + 2 + i * 5 + n * 2;
+      g.fillStyle = '#7d9e2c'; g.beginPath(); g.arc(cx, y, 2.2 + n * 1.8, Math.PI, 0); g.fill();
+      g.fillStyle = '#a9c94a'; g.beginPath(); g.arc(cx - 0.6, y - 0.8, 1 + n * 0.8, Math.PI, 0); g.fill();
     }
-    g.fillStyle = C.moss;
     for (let i = 0; i < 2; i++) {
       const n = hash(c + i * 11, r * 3);
-      if (n < 0.5) g.fillRect(x + 4 + n * 30, y + 3, 2.5, 2 + n * 6);
+      if (n < 0.55) {
+        const dx = x + 3 + n * 34, len = 3 + n * 7;
+        g.fillStyle = '#5d7d22'; rr(g, dx, y + 2, 2.6, len, 1.3); g.fill();
+        g.fillStyle = '#7d9e2c'; g.beginPath(); g.arc(dx + 1.3, y + 2 + len, 1.5, 0, 7); g.fill();
+      }
     }
-    // a hanging vine now and then
-    if (hash(c, r * 13) < 0.16 && solid(c, r + 1)) {
-      const len = 14 + hash(c, r) * 22;
-      const vx = x + 6 + hash(r, c) * 12;
-      g.strokeStyle = '#6d9a2e'; g.lineWidth = 1.5;
-      g.beginPath(); g.moveTo(vx, y + 2);
-      g.quadraticCurveTo(vx + 5, y + len * 0.5, vx + 1, y + len); g.stroke();
-      g.fillStyle = C.leaf;
-      for (let i = 1; i <= 3; i++) {
-        const ly = y + (len * i) / 3.4, lx = vx + 3 * Math.sin(i * 2);
-        g.beginPath(); g.ellipse(lx + (i % 2 ? 3 : -3), ly, 3, 1.8, i % 2 ? 0.6 : -0.6, 0, 7); g.fill();
+    if (hash(c, r * 13) < 0.13 && solid(c, r + 1)) {
+      const len = 16 + hash(c, r) * 24, vx = x + 6 + hash(r, c) * 12;
+      g.strokeStyle = '#4f6d1c'; g.lineWidth = 1.4;
+      g.beginPath(); g.moveTo(vx, y + 2); g.quadraticCurveTo(vx + 5, y + len * 0.5, vx + 1, y + len); g.stroke();
+      for (let i = 1; i <= 4; i++) {
+        const ly = y + (len * i) / 4.4, lx = vx + 2.5 * Math.sin(i * 2) + (i % 2 ? 3.2 : -3.2);
+        g.fillStyle = i % 2 ? '#c6c440' : '#9fb43a';
+        g.beginPath(); g.ellipse(lx, ly, 3.2, 2, i % 2 ? 0.6 : -0.6, 0, 7); g.fill();
       }
     }
   }
@@ -246,7 +281,7 @@
     g.closePath(); g.fill();
   }
 
-  function banner(g, cx, y) {
+  function bannerVec(g, cx, y) {
     g.fillStyle = '#5b4a2e'; g.fillRect(cx - 11, y + 2, 22, 3);
     g.fillStyle = '#7a4fd0';
     g.beginPath(); g.moveTo(cx - 9, y + 5); g.lineTo(cx + 9, y + 5); g.lineTo(cx + 9, y + 34); g.lineTo(cx, y + 28); g.lineTo(cx - 9, y + 34); g.closePath(); g.fill();
@@ -255,7 +290,7 @@
     ghostIcon(g, cx, y + 16, 9, '#efe6ff');
   }
 
-  function grave(g, cx, by) {
+  function graveVec(g, cx, by) {
     g.fillStyle = '#6d5f96';
     g.beginPath(); g.moveTo(cx - 9, by); g.lineTo(cx - 9, by - 14); g.arc(cx, by - 14, 9, Math.PI, 0); g.lineTo(cx + 9, by); g.closePath(); g.fill();
     g.fillStyle = 'rgba(255,255,255,.12)'; g.fillRect(cx - 8, by - 14, 2, 13);
@@ -264,7 +299,7 @@
   }
 
   // ---------- dynamic pieces ----------
-  function lantern(c, cx, y, t, i) {
+  function lanternVec(c, cx, y, t, i) {
     const fl = 0.85 + Math.sin(t * 9 + i * 3) * 0.08 + Math.sin(t * 23 + i) * 0.05;
     c.save();
     c.globalCompositeOperation = 'lighter';
@@ -282,7 +317,7 @@
     c.fillStyle = '#2b2140'; c.beginPath(); c.moveTo(cx - 7, y + 21); c.lineTo(cx + 7, y + 21); c.lineTo(cx, y + 25); c.fill();
   }
 
-  function candles(c, cx, by, t, i) {
+  function candlesVec(c, cx, by, t, i) {
     c.save(); c.globalCompositeOperation = 'lighter';
     const gl = c.createRadialGradient(cx, by - 14, 1, cx, by - 14, 30);
     gl.addColorStop(0, 'rgba(255,200,110,.25)'); gl.addColorStop(1, 'rgba(255,200,110,0)');
@@ -302,7 +337,7 @@
     const list = [];
     const solid = (c, r) => r < 0 || c < 0 || c >= w.cols || r >= w.rows || w.grid[r][c] === '#';
     for (let r = 1; r < w.rows - 1; r++) for (let c = 1; c < w.cols - 1; c++) {
-      if (w.grid[r][c] !== '.' || !solid(c, r - 1) || hash(c * 7, r * 3) > 0.09) continue;
+      if (w.grid[r][c] !== '.' || !solid(c, r - 1) || hash(c * 7, r * 3) > 0.045) continue;
       let room = 0;
       while (room < 3 && !solid(c, r + room)) room++;
       if (room < 2) continue;
@@ -311,7 +346,7 @@
     return (w._spiders = list);
   }
 
-  function spider(c, s, t) {
+  function spiderVec(c, s, t) {
     const len = s.len + Math.sin(t * 0.9 + s.ph) * 7;
     const x = s.x, y = s.y + len;
     c.strokeStyle = 'rgba(230,225,255,.35)'; c.lineWidth = 0.8;
@@ -331,7 +366,7 @@
     c.beginPath(); c.arc(x - 2, y + 1, 1.3, 0, 7); c.arc(x + 2, y + 1, 1.3, 0, 7); c.fill();
   }
 
-  function bat(c, x, y, t, s) {
+  function batVec(c, x, y, t, s) {
     const flap = Math.sin(t * 12 + s) * 5;
     c.fillStyle = '#4a2f8a';
     c.beginPath();
@@ -359,12 +394,13 @@
       if (!kind) continue;
       const x = col * TILE, y = r * TILE;
       const [a, b, d] = POOL[kind];
-      // glow above the surface
+      // soft glow above the surface (one rounded pool of light per tile, overlapping)
+      const gc = kind === 'lava' ? '255,130,40' : kind === 'void' ? '140,100,255' : '150,255,90';
       c.save(); c.globalCompositeOperation = 'lighter';
-      const glow = c.createLinearGradient(0, y - 14, 0, y + 6);
-      const gc = kind === 'lava' ? '255,120,30' : kind === 'void' ? '120,90,255' : '140,255,80';
-      glow.addColorStop(0, `rgba(${gc},0)`); glow.addColorStop(1, `rgba(${gc},${kind === 'void' ? 0.22 : 0.3})`);
-      c.fillStyle = glow; c.fillRect(x, y - 14, TILE, 20);
+      c.translate(x + TILE / 2, y + 6); c.scale(1, 0.6);
+      const gl = c.createRadialGradient(0, 0, 2, 0, 0, 26);
+      gl.addColorStop(0, `rgba(${gc},${kind === 'void' ? 0.16 : 0.22})`); gl.addColorStop(1, `rgba(${gc},0)`);
+      c.fillStyle = gl; c.beginPath(); c.arc(0, 0, 26, 0, 7); c.fill();
       c.restore();
       if (kind === 'void') continue; // drawn as whole portals below
       const grad = c.createLinearGradient(0, y + 3, 0, y + 13);
@@ -428,7 +464,7 @@
     c.restore();
   }
 
-  function door(c, d, role, t) {
+  function doorVec(c, d, role, t) {
     const cx = d.x + d.w / 2, top = d.y, bot = d.y + d.h, R = d.w / 2;
     // stone arch frame
     c.fillStyle = '#8b76c4';
@@ -542,15 +578,15 @@
     gl.addColorStop(0, boy ? 'rgba(255,150,60,.5)' : 'rgba(90,190,255,.5)'); gl.addColorStop(1, 'rgba(0,0,0,0)');
     c.fillStyle = gl; c.fillRect(cx - 16, cy - 16, 32, 32);
     c.restore();
-    if (boy) [candy, lollipop, candyCorn][variant % 3](c, cx, cy, t + i);
-    else pumpkin(c, cx, cy, t + i);
+    if (boy) { if (!sprite(c, ['wrapped', 'lollipop', 'corn'][variant % 3], cx, cy, 0, 21, { rot: Math.sin((t + i) * 2.4) * 0.15 })) [candy, lollipop, candyCorn][variant % 3](c, cx, cy, t + i); }
+    else if (!sprite(c, 'pumpkin', cx, cy, 0, 22, { rot: Math.sin((t + i) * 2) * 0.08 })) pumpkin(c, cx, cy, t + i);
     if (Math.sin(t * 2 + i * 1.7) > 0.92) {
       c.fillStyle = '#fff';
       const s = 2.5; c.beginPath(); c.moveTo(cx + 6, cy - 9 - s); c.lineTo(cx + 6.6, cy - 9); c.lineTo(cx + 6, cy - 9 + s); c.lineTo(cx + 5.4, cy - 9); c.fill();
     }
   }
 
-  function button(c, b, i) {
+  function buttonVec(c, b, i) {
     const col = i % 2 ? ['#ffb23f', 'rgba(255,170,60,'] : ['#5cc8ff', 'rgba(90,190,255,'];
     c.fillStyle = '#6b5a9e'; rr(c, b.x - 2, b.y + 2, b.w + 4, 4, 1.5); c.fill();
     const h = b.pressed ? 1.5 : 4;
@@ -565,7 +601,7 @@
     c.fillStyle = 'rgba(255,255,255,.5)'; c.fillRect(b.x + 3, b.y + 2 - h, b.w - 6, 1);
   }
 
-  function lever(c, l) {
+  function leverVec(c, l) {
     const bx = l.x + l.w / 2, by = l.y + l.h;
     const ang = (l.on ? 1 : -1) * 0.6;
     const kx = bx + Math.sin(ang) * 17, ky = by - 5 - Math.cos(ang) * 17;
@@ -581,14 +617,28 @@
   function platform(c, pl, v) {
     if (pl.kind === 'retract') {
       if (v < 0.5) return;
-      // iron portcullis bars
-      c.fillStyle = '#2c2148'; c.fillRect(pl.x, pl.y, pl.w, v);
-      c.fillStyle = '#5a4890';
-      c.fillRect(pl.x + 1, pl.y, 3, v); c.fillRect(pl.x + pl.w - 4, pl.y, 3, v);
-      for (let y = pl.y + 8; y < pl.y + v - 3; y += 14) c.fillRect(pl.x, y, pl.w, 2.5);
-      c.fillStyle = '#8b76c4';
-      c.beginPath(); c.moveTo(pl.x, pl.y + v); c.lineTo(pl.x + 2.5, pl.y + v + 5); c.lineTo(pl.x + 5, pl.y + v);
-      c.moveTo(pl.x + pl.w - 5, pl.y + v); c.lineTo(pl.x + pl.w - 2.5, pl.y + v + 5); c.lineTo(pl.x + pl.w, pl.y + v); c.fill();
+      // iron portcullis that slides up into the ceiling
+      const gx = pl.x - 3, gw = pl.w + 6;
+      c.fillStyle = 'rgba(15,6,40,.35)'; c.fillRect(gx + 2, pl.y, gw, v);
+      for (const bx of [gx + 2, gx + gw / 2, gx + gw - 2]) {
+        const bar = c.createLinearGradient(bx - 2, 0, bx + 2, 0);
+        bar.addColorStop(0, '#5c4f86'); bar.addColorStop(0.5, '#3a2f5e'); bar.addColorStop(1, '#231b3d');
+        c.fillStyle = bar; c.fillRect(bx - 2, pl.y, 4, v);
+        if (v > 6) { c.fillStyle = '#7a6aae'; c.beginPath(); c.moveTo(bx - 2.5, pl.y + v); c.lineTo(bx, pl.y + v + 5); c.lineTo(bx + 2.5, pl.y + v); c.fill(); }
+      }
+      for (let y = pl.y + 10; y < pl.y + v - 4; y += 22) {
+        c.fillStyle = '#4a3e74'; rr(c, gx - 1, y, gw + 2, 4, 1.5); c.fill();
+        c.fillStyle = '#8f80c4';
+        for (const bx of [gx + 2, gx + gw / 2, gx + gw - 2]) { c.beginPath(); c.arc(bx, y + 2, 1.2, 0, 7); c.fill(); }
+      }
+    } else if (ready('swing') && ready('chain')) {
+      for (const cx of [pl.x + 13, pl.x + pl.w - 13]) {
+        const im = SPR.chain, cw = 7, chh = cw * im.naturalHeight / im.naturalWidth;
+        c.save(); c.beginPath(); c.rect(cx - 6, TILE, 12, v - TILE); c.clip();
+        for (let y = v - 4; y > TILE - chh; y -= chh - 1) c.drawImage(im, cx - cw / 2, y - chh, cw, chh);
+        c.restore();
+      }
+      c.drawImage(SPR.swing, pl.x - 3, v - 8, pl.w + 6, 24);
     } else {
       // wooden swing on chains
       c.strokeStyle = '#a89ab8'; c.lineWidth = 1.5;
@@ -608,7 +658,7 @@
   // The boy uses sprites cut from the GhostTown design sheets (assets/boy-*.png).
   // Until they load, the hand-drawn version below stands in.
   const BOY_IMG = {};
-  const BOY_H = { idle: 52, run: 47, jump: 50.5 };      // height in game pixels
+  const BOY_H = { idle: 43, run: 38.7, jump: 41.6 };      // height in game pixels
   const BOY_DX = { idle: 1, run: -2, jump: 0 };           // nudge so the body sits over the hitbox
   if (typeof Image !== 'undefined') {
     for (const k of Object.keys(BOY_H)) { const im = new Image(); im.src = 'assets/boy-' + k + '.png'; BOY_IMG[k] = im; }
@@ -649,7 +699,7 @@
       c.fillStyle = 'rgba(200,180,255,.25)';
       c.beginPath(); c.arc(cx - f * 10, by - 2, 2.6, 0, 7); c.arc(cx - f * 13.5, by - 3.5, 1.8, 0, 7); c.fill();
     }
-    if (isMe) marker(c, cx, p.y - 28, t, C.boy);
+    if (isMe) marker(c, cx, p.y - 16, t, C.boy);
   }
 
   function drawBoyVector(c, p, t, isMe) {
@@ -791,7 +841,7 @@
     c.restore();
   }
 
-  function drawGhost(c, p, t, isMe) {
+  function drawGhostVec(c, p, t, isMe) {
     const f = p.facing || 1;
     const cx = p.x + PW / 2;
     const cy = p.y + 15 + Math.sin(t * 3) * 1.8;
@@ -869,18 +919,130 @@
 
   function drawPlayer(c, p, t, isMe) { p.role === 'boy' ? drawBoy(c, p, t, isMe) : drawGhost(c, p, t, isMe); }
 
+
+  // ---------- sprites cut from the GhostTown design sheets (assets/) ----------
+  const SPR = {};
+  const SPR_NAMES = ['ghost-idle', 'ghost-float', 'ghost-excited', 'door-boy', 'door-ghost', 'lantern', 'banner', 'candles', 'grave',
+    'btn-blue', 'btn-orange', 'lever', 'swing', 'chain', 'lollipop', 'wrapped', 'corn', 'pumpkin', 'spider', 'bat'];
+  if (typeof Image !== 'undefined') for (const n of SPR_NAMES) { const im = new Image(); im.src = 'assets/' + n + '.png'; SPR[n] = im; }
+  const ready = (n) => SPR[n] && SPR[n].complete && SPR[n].naturalWidth > 0;
+  // draw sprite n centred at (cx, cy) with width w or height h (the other from aspect); returns false if not loaded
+  function sprite(c, n, cx, cy, w, h, o) {
+    if (!ready(n)) return false;
+    const im = SPR[n];
+    if (!w) w = h * im.naturalWidth / im.naturalHeight;
+    if (!h) h = w * im.naturalHeight / im.naturalWidth;
+    o = o || {};
+    c.save(); c.translate(cx, cy);
+    if (o.rot) c.rotate(o.rot);
+    if (o.flip) c.scale(-1, 1);
+    if (o.sy) c.scale(1, o.sy);
+    if (o.alpha != null) c.globalAlpha *= o.alpha;
+    c.drawImage(im, -w / 2, o.anchor === 'bottom' ? -h : o.anchor === 'top' ? 0 : -h / 2, w, h);
+    c.restore();
+    return true;
+  }
+
+  function lightPool(c, x, y, r, rgb, a) {
+    c.save(); c.globalCompositeOperation = 'lighter';
+    const g = c.createRadialGradient(x, y, 1, x, y, r);
+    g.addColorStop(0, `rgba(${rgb},${a})`); g.addColorStop(1, `rgba(${rgb},0)`);
+    c.fillStyle = g; c.fillRect(x - r, y - r, r * 2, r * 2);
+    c.restore();
+  }
+
+  function lantern(c, cx, y, t, i) {
+    if (!ready('lantern')) return lanternVec(c, cx, y, t, i);
+    const fl = 0.9 + Math.sin(t * 9 + i * 3) * 0.06 + Math.sin(t * 23 + i) * 0.04;
+    lightPool(c, cx + 2, y + 20, 62 * fl, '255,180,90', 0.26);
+    sprite(c, 'lantern', cx, y - 2, 0, 31, { anchor: 'top' });
+  }
+  function candles(c, cx, by, t, i) {
+    if (!ready('candles')) return candlesVec(c, cx, by, t, i);
+    const fl = 0.9 + Math.sin(t * 11 + i) * 0.08;
+    lightPool(c, cx, by - 16, 34 * fl, '255,200,110', 0.22);
+    sprite(c, 'candles', cx, by + 1, 0, 23, { anchor: 'bottom' });
+  }
+  function banner(c, cx, y) { if (!sprite(c, 'banner', cx, y, 0, 36, { anchor: 'top' })) bannerVec(c, cx, y); }
+  function grave(c, cx, by) { if (!sprite(c, 'grave', cx, by + 1, 0, 27, { anchor: 'bottom' })) graveVec(c, cx, by); }
+
+  function spider(c, s, t) {
+    if (!ready('spider')) return spiderVec(c, s, t);
+    const len = s.len + Math.sin(t * 0.9 + s.ph) * 7;
+    c.strokeStyle = 'rgba(230,225,255,.35)'; c.lineWidth = 0.8;
+    c.beginPath(); c.moveTo(s.x, s.y); c.lineTo(s.x, s.y + len - 4); c.stroke();
+    sprite(c, 'spider', s.x, s.y + len + 2, 21, 0, { rot: Math.sin(t * 1.3 + s.ph) * 0.12 });
+  }
+  function bat(c, x, y, t, s) {
+    if (!ready('bat')) return batVec(c, x, y, t, s);
+    sprite(c, 'bat', x, y, 30, 0, { sy: 0.65 + 0.35 * Math.abs(Math.sin(t * 9 + s)) });
+  }
+
+  function door(c, d, role, t) {
+    const n = role === 'boy' ? 'door-boy' : 'door-ghost';
+    if (!ready(n)) return doorVec(c, d, role, t);
+    const cx = d.x + d.w / 2, bot = d.y + d.h + 1;
+    const rgb = role === 'boy' ? '255,170,60' : '90,180,255';
+    lightPool(c, cx, bot - 26, d.open ? 70 : 42, rgb, d.open ? 0.4 : 0.16 + 0.04 * Math.sin(t * 2));
+    sprite(c, n, cx, bot, 0, 58, { anchor: 'bottom' });
+    if (d.open) {
+      c.save(); c.globalCompositeOperation = 'lighter';
+      sprite(c, n, cx, bot, 0, 58, { anchor: 'bottom', alpha: 0.35 + 0.1 * Math.sin(t * 6) });
+      c.restore();
+    }
+  }
+
+  // glowing pressure plate, mostly sunk into the floor like the original game's buttons
+  function button(c, b, i) {
+    const n = i % 2 ? 'btn-orange' : 'btn-blue';
+    if (!ready(n)) return buttonVec(c, b, i);
+    const floor = b.y + 6, w = 28, h = w * SPR[n].naturalHeight / SPR[n].naturalWidth;
+    if (b.pressed) lightPool(c, b.x + b.w / 2, floor - 2, 30, i % 2 ? '255,170,60' : '90,190,255', 0.45);
+    c.save(); c.beginPath(); c.rect(b.x - 10, floor - 30, b.w + 20, 31); c.clip();
+    c.drawImage(SPR[n], b.x + b.w / 2 - w / 2, floor - (b.pressed ? 5 : 9), w, h);
+    c.restore();
+  }
+
+  function lever(c, l) {
+    if (!ready('lever')) return leverVec(c, l);
+    sprite(c, 'lever', l.x + l.w / 2, l.y + l.h + 1, 0, 27, { anchor: 'bottom', flip: !l.on });
+  }
+
+  // The ghost, from the sheets: idle when still, float when moving, excited at the door
+  function drawGhost(c, p, t, isMe) {
+    const moving = Math.abs(p.vx) > 25;
+    const n = p.inDoor ? 'ghost-excited' : moving || !p.grounded ? 'ghost-float' : 'ghost-idle';
+    if (!ready(n)) return drawGhostVec(c, p, t, isMe);
+    const cx = p.x + PW / 2;
+    if (!p.alive) return poof(c, cx, p.y + 15, t, '200,220,255');
+    const f = p.facing || 1;
+    const bob = Math.sin(t * 3) * 1.8;
+    if (p.grounded) { c.fillStyle = 'rgba(10,5,30,.22)'; c.beginPath(); c.ellipse(cx, p.y + PH, 9, 2, 0, 0, 7); c.fill(); }
+    lightPool(c, cx, p.y + 16 + bob, 30, '170,160,255', 0.2);
+    sprite(c, n, cx - f * 2, p.y + PH - 1 + bob, 0, 42, { anchor: 'bottom', flip: f < 0, rot: moving ? f * 0.06 : 0 });
+    if (moving) for (let i = 0; i < 3; i++) {
+      const a = Math.sin(t * 6 + i * 2);
+      if (a < 0) continue;
+      c.fillStyle = `rgba(210,225,255,${a * 0.9})`;
+      const sx = cx - f * (22 + i * 6), sy = p.y + 18 + Math.sin(t * 5 + i) * 5 + bob;
+      c.beginPath(); c.moveTo(sx, sy - 2.5); c.lineTo(sx + 0.7, sy); c.lineTo(sx, sy + 2.5); c.lineTo(sx - 0.7, sy); c.fill();
+    }
+    if (isMe) marker(c, cx, p.y - 21, t, C.ghost);
+  }
+
   // ---------- frame ----------
   function drawFrame(ctx, w, staticLayer, t, opts) {
-    ctx.drawImage(staticLayer, 0, 0);
+    const W = w.cols * TILE, H = w.rows * TILE;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(staticLayer, 0, 0, W, H);
     // bats drift across the moonlit top
     for (let i = 0; i < 2; i++) {
-      const span = ctx.canvas.width + 120;
+      const span = W + 120;
       const x = ((t * (22 + i * 8) + i * 400) % span) - 60;
       bat(ctx, x, 46 + i * 34 + Math.sin(t * 1.5 + i) * 10, t, i);
     }
     const d = w.decor || {};
     for (let i = 0; i < 5; i++) {
-      const H = ctx.canvas.height, W = ctx.canvas.width;
       const sp = 16 + hash(i, 4) * 10;
       const y = ((t * sp + hash(i, 1) * H) % (H + 40)) - 20;
       const x = hash(i, 2) * W + Math.sin(t * 0.8 + i * 2) * 26;
@@ -890,6 +1052,8 @@
       ctx.beginPath(); ctx.moveTo(0, -4); ctx.quadraticCurveTo(4, -1, 0, 5); ctx.quadraticCurveTo(-4, -1, 0, -4); ctx.fill();
       ctx.restore();
     }
+    (d.banners || []).forEach(([c, r]) => banner(ctx, c * TILE + 12, r * TILE));
+    (d.graves || []).forEach(([c, r]) => grave(ctx, c * TILE + 12, (r + 1) * TILE));
     (d.lanterns || []).forEach(([c, r], i) => lantern(ctx, c * TILE + 12, r * TILE, t, i));
     (d.candles || []).forEach(([c, r], i) => candles(ctx, c * TILE + 12, (r + 1) * TILE, t, i));
     spidersFor(w).forEach((s) => spider(ctx, s, t));
@@ -908,5 +1072,26 @@
     }
   }
 
-  window.Art = { buildStatic, drawFrame, drawPlayer, candy, lollipop, candyCorn, pumpkin };
+    // full-screen title backdrop: the same painted night sky, a few lanterns-worth of glow and drifting bats
+  function drawBackdrop(cv, t) {
+    const c = cv.getContext('2d'), W = 816, H = 600, res = cv.width / W;
+    if (!cv._sky) {
+      const k = document.createElement('canvas'); k.width = cv.width; k.height = cv.height;
+      const g = k.getContext('2d'); g.scale(res, res); drawSky(g, W, H); cv._sky = k;
+    }
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.drawImage(cv._sky, 0, 0);
+    c.setTransform(res, 0, 0, res, 0, 0);
+    for (let i = 0; i < 3; i++) bat(c, ((t * (16 + i * 7) + i * 300) % (W + 120)) - 60, 70 + i * 40 + Math.sin(t * 1.2 + i) * 12, t, i);
+    for (let i = 0; i < 7; i++) {
+      const y = ((t * (14 + hash(i, 4) * 10) + hash(i, 1) * H) % (H + 40)) - 20;
+      const x = hash(i, 2) * W + Math.sin(t * 0.8 + i * 2) * 26;
+      c.save(); c.translate(x, y); c.rotate(Math.sin(t * 1.3 + i) * 1.2); c.globalAlpha = 0.7;
+      c.fillStyle = ['#e8742a', '#c9461f', '#f2a03d'][i % 3];
+      c.beginPath(); c.moveTo(0, -4); c.quadraticCurveTo(4, -1, 0, 5); c.quadraticCurveTo(-4, -1, 0, -4); c.fill();
+      c.restore();
+    }
+  }
+
+  window.Art = { buildStatic, drawFrame, drawPlayer, drawBackdrop, candy, lollipop, candyCorn, pumpkin, sprites: SPR };
 })();

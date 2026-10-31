@@ -20,6 +20,10 @@
   const $ = (id) => document.getElementById(id);
   const cv = $('cv');
   const ctx = cv.getContext('2d');
+  // draw at the screen's real pixel density so the painted sprites stay sharp
+  const LW = 816, LH = 600;
+  const RES = Math.min(2, Math.max(1, Math.round(window.devicePixelRatio || 1)));
+  cv.width = LW * RES; cv.height = LH * RES;
 
   const S = {
     mode: null, role: null, code: null,
@@ -71,13 +75,22 @@
     (function anim(now) {
       if (S.mode) return;
       const t = now / 1000;
-      c.clearRect(0, 0, 104, 96);
-      c.save(); c.translate(52 - 9 * 1.8, role === 'boy' ? 28 : 26); c.scale(role === 'boy' ? 1.6 : 1.8, role === 'boy' ? 1.6 : 1.8);
+      c.clearRect(0, 0, 240, 208);
+      c.save(); c.scale(2, 2); c.translate(60 - 9 * 1.7, role === 'boy' ? 22 : 26); c.scale(1.7, 1.7);
       Art.drawPlayer(c, { role, x: 0, y: 0, vx: 0, facing: 1, alive: true, grounded: true }, t, false);
       c.restore();
       requestAnimationFrame(anim);
     })(0);
   });
+
+  // animated painted backdrop behind the title screen
+  const bg = $('bg');
+  bg.width = 816 * 2; bg.height = 600 * 2;
+  (function bgFrame(now) {
+    if (S.mode) return;
+    Art.drawBackdrop(bg, now / 1000);
+    requestAnimationFrame(bgFrame);
+  })(0);
 
   const lobbyErr = (msg) => { $('lobby-err').textContent = msg || ''; };
   const busy = (on) => { $('create').disabled = $('join').disabled = $('local').disabled = on; };
@@ -233,7 +246,7 @@
     const w = S.world;
     const levelChanged = s.lvl !== w.levelIndex;
     G.applySnapshot(w, s);
-    if (levelChanged) staticLayer = Art.buildStatic(w, cv.width, cv.height);
+    if (levelChanged) staticLayer = Art.buildStatic(w, LW, LH, RES);
     const me = w.players[S.role];
     S.pending = S.pending.filter((i) => i.s > s.p[S.role].ack);
     if (w.status === 'playing' && !w.held && me.alive) for (const i of S.pending) G.stepPlayer(me, i, w, DT);
@@ -397,7 +410,7 @@
     if (w.status !== 'playing' || w.ticks > 170) return;
     const k = w.ticks, a = k < 25 ? k / 25 : k > 120 ? Math.max(0, (170 - k) / 50) : 1;
     ctx.save(); ctx.globalAlpha = a; ctx.textAlign = 'center';
-    const cx = cv.width / 2, cy = 150;
+    const cx = LW / 2, cy = 150;
     ctx.fillStyle = 'rgba(30,20,62,.82)'; ctx.strokeStyle = '#6e5ab6'; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.roundRect(cx - 170, cy - 48, 340, 86, 20); ctx.fill(); ctx.stroke();
     ctx.fillStyle = '#f5c56b'; ctx.font = '400 15px Marcellus, Georgia, serif';
@@ -410,7 +423,7 @@
 
   let staticLayer = null;
   function startLoop() {
-    staticLayer = Art.buildStatic(S.world, cv.width, cv.height);
+    staticLayer = Art.buildStatic(S.world, LW, LH, RES);
     let last = performance.now(), acc = 0;
     setInterval(() => {
       const now = performance.now();
@@ -426,16 +439,16 @@
 
   // ---------- overlays ----------
   function overlay(title, sub, color) {
-    ctx.fillStyle = 'rgba(12,6,32,.68)'; ctx.fillRect(0, 0, cv.width, cv.height);
+    ctx.fillStyle = 'rgba(12,6,32,.68)'; ctx.fillRect(0, 0, LW, LH);
     ctx.textAlign = 'center';
     ctx.font = '400 44px Pacifico, cursive';
     ctx.fillStyle = color || '#f3e9ff';
     ctx.shadowColor = color || '#a77bff'; ctx.shadowBlur = 18;
-    ctx.fillText(title, cv.width / 2, cv.height / 2 - 6);
+    ctx.fillText(title, LW / 2, LH / 2 - 6);
     ctx.shadowBlur = 0;
     if (sub) {
       ctx.fillStyle = '#d6cbef'; ctx.font = '400 19px Marcellus, Georgia, serif';
-      sub.split('\n').forEach((line, i) => ctx.fillText(line, cv.width / 2, cv.height / 2 + 34 + i * 26));
+      sub.split('\n').forEach((line, i) => ctx.fillText(line, LW / 2, LH / 2 + 34 + i * 26));
     }
   }
 
@@ -448,6 +461,7 @@
   function render(t) {
     const w = S.world;
     if (!staticLayer) return;
+    ctx.setTransform(RES, 0, 0, RES, 0, 0);
     const opts = { me: S.mode === 'local' ? null : S.role };
     if (S.mode === 'guest') {
       const ip = interpolated();

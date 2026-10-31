@@ -10,27 +10,31 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Lobby -->
-  <section id="lobby" class="panel">
-    <h1>Gh<svg class="o" viewBox="0 0 24 26" aria-hidden="true"><path d="M2 12a10 10 0 0 1 20 0v12l-3.3-2.5L15.3 24 12 21.5 8.7 24l-3.4-2.5L2 24z" fill="#fff"/><ellipse cx="8.6" cy="11" rx="1.6" ry="2.2" fill="#1e1430"/><ellipse cx="15.4" cy="11" rx="1.6" ry="2.2" fill="#1e1430"/><path d="M10 15.5q2 2.6 4 0z" fill="#1e1430"/></svg>st<span>Town</span></h1>
-    <p class="sub">A boy, his ghost, and one very haunted temple</p>
-
-    <div class="chip">Choose your hero</div>
-    <div class="pick">
-      <button class="char boy selected" data-role="boy"><canvas width="104" height="96"></canvas><span>The Boy</span><small>loves candy</small></button>
-      <button class="char ghost" data-role="ghost"><canvas width="104" height="96"></canvas><span>The Ghost</span><small>loves pumpkins</small></button>
+  <!-- Lobby: full-screen title screen over the painted night sky -->
+  <section id="lobby">
+    <canvas id="bg" aria-hidden="true"></canvas>
+    <div class="panel">
+      <div class="col left">
+      <h1>Gh<svg class="o" viewBox="0 0 24 26" aria-hidden="true"><path d="M2 12a10 10 0 0 1 20 0v12l-3.3-2.5L15.3 24 12 21.5 8.7 24l-3.4-2.5L2 24z" fill="#fff"/><ellipse cx="8.6" cy="11" rx="1.6" ry="2.2" fill="#1e1430"/><ellipse cx="15.4" cy="11" rx="1.6" ry="2.2" fill="#1e1430"/><path d="M10 15.5q2 2.6 4 0z" fill="#1e1430"/></svg>st<span>Town</span></h1>
+        <p class="sub">A boy, his ghost, and one very haunted temple</p>
+        <div class="chip">Choose your hero</div>
+        <div class="pick">
+          <button class="char boy selected" data-role="boy"><canvas width="240" height="208"></canvas><span>The Boy</span><small>loves candy</small></button>
+          <button class="char ghost" data-role="ghost"><canvas width="240" height="208"></canvas><span>The Ghost</span><small>loves pumpkins</small></button>
+        </div>
+      </div>
+      <div class="col right">
+        <button id="create" class="cta orange">Create room</button>
+        <div class="divider"><span>or</span></div>
+        <button id="local" class="cta blue">Play on one screen</button>
+        <div class="divider wide"><span>or join a friend</span></div>
+        <div class="join">
+          <input id="code" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false">
+          <button id="join" class="cta ghostbtn">Join</button>
+        </div>
+        <p id="lobby-err" class="err"></p>
+      </div>
     </div>
-
-    <button id="create" class="cta orange">Create room</button>
-    <div class="divider"><span>or</span></div>
-    <button id="local" class="cta blue">Play on one screen</button>
-
-    <div class="divider wide"><span>or join a friend</span></div>
-    <div class="join">
-      <input id="code" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false">
-      <button id="join" class="cta ghostbtn">Join</button>
-    </div>
-    <p id="lobby-err" class="err"></p>
   </section>
 
   <!-- Game -->
