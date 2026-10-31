@@ -45,7 +45,9 @@
     if (!S.mode || e.repeat) return;
     if (e.code === 'KeyR') requestRestart();
     if (e.code === 'KeyM') toggleMusic();
-    if (e.code === 'Escape' || e.code === 'KeyP') setPause(!S.world.held);
+    if (e.code === 'KeyH') setHelp(!helpOpen);
+    else if (e.code === 'Escape' && helpOpen) setHelp(false);
+    else if (e.code === 'Escape' || e.code === 'KeyP') setPause(!S.world.held);
   });
   addEventListener('keyup', (e) => down.delete(e.code));
   addEventListener('pointerdown', () => Sound.unlock());
@@ -292,6 +294,14 @@
     else S.world.held = on;
   }
   $('pause').onclick = () => setPause(!S.world.held);
+  let helpOpen = false;
+  function setHelp(on) {
+    helpOpen = on;
+    $('help').hidden = !on;
+    if (on) setPause(true); else setPause(false);
+  }
+  $('help-btn').onclick = () => setHelp(!helpOpen);
+  $('help-close').onclick = () => setHelp(false);
   $('resume').onclick = () => setPause(false);
   $('restart').onclick = () => { requestRestart(); };
   $('quit').onclick = () => { location.href = location.pathname; };
@@ -300,7 +310,7 @@
     const show = !!S.world.held;
     if (show === menuShown) return;
     menuShown = show;
-    $('pause-menu').hidden = !show;
+    $('pause-menu').hidden = !show || helpOpen;
     $('pause-note').textContent = S.mode === 'local' ? '' : 'Paused for both players';
     down.clear();
   }
@@ -326,8 +336,8 @@
     $('hud-role').textContent = online ? 'You are ' + NAMES[S.role] : '';
     $('hud-role').className = 'tag ' + (S.role || 'ghost');
     $('keys').innerHTML = online
-      ? '<span class="k-title">Move</span><kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd><span class="k-title">Jump</span><kbd>↑</kbd> <kbd>W</kbd> <kbd>Space</kbd><span class="k-title">More</span>Restart <kbd>R</kbd><br>Pause <kbd>Esc</kbd>'
-      : '<span class="k-title">Andy</span><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><span class="k-title">His Ghost</span><kbd>A</kbd><kbd>W</kbd><kbd>D</kbd><span class="k-title">More</span>Restart <kbd>R</kbd><br>Pause <kbd>Esc</kbd>';
+      ? '<span class="k-title">Move</span><kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd><br><span class="k-title">Jump</span><kbd>↑</kbd> <kbd>W</kbd> <kbd>Space</kbd><br><span class="k-title">Keys</span>Restart <kbd>R</kbd> · Pause <kbd>Esc</kbd>'
+      : '<span class="k-title">Andy</span><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><br><span class="k-title">His Ghost</span><kbd>A</kbd><kbd>W</kbd><kbd>D</kbd><br><span class="k-title">Keys</span>Restart <kbd>R</kbd> · Pause <kbd>Esc</kbd>';
     if (S.mode === 'host') {
       const link = location.origin + location.pathname + '?room=' + S.code;
       $('share').innerHTML = 'Send this to your partner: <code>' + link + '</code> <button id="copy">Copy</button>';
