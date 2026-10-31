@@ -45,16 +45,16 @@ button { font-family: inherit; }
 .col { display: flex; flex-direction: column; align-items: stretch; min-width: 0; }
 .col.left { align-items: center; }
 h1 {
-  font-family: Pacifico, cursive; font-weight: 400; font-size: clamp(42px, 7.4vh, 64px); line-height: 1.5; margin: -6px 0 4px; letter-spacing: .5px;
+  font-family: Pacifico, cursive; font-weight: 400; font-size: clamp(40px, 7vh, 60px); line-height: 1.35; margin: 0 0 2px;
   color: #fff7ea; letter-spacing: 0;
   text-shadow: 0 0 6px rgba(255,230,190,.6), 0 0 18px rgba(167,123,255,.85), 0 0 42px rgba(130,80,255,.55);
 }
 h1 .o { width: 30px; height: 33px; vertical-align: 0; margin: 0 1px; filter: drop-shadow(0 0 8px rgba(180,200,255,.8)); }
 h1 span { margin-left: 8px; }
-.sub { font-family: Fredoka, sans-serif; font-weight: 500; color: #d3c6f5; margin: 0 0 clamp(10px, 2.2vh, 20px); font-size: 16px; }
+.sub { font-family: Marcellus, Georgia, serif; color: #cbbdf0; margin: 0 0 clamp(10px, 2.2vh, 20px); font-size: 16px; }
 .chip {
   display: inline-flex; align-items: center; gap: 8px;
-  font-family: Fredoka, sans-serif; font-weight: 600; font-size: 15px; color: #f3ecff; letter-spacing: .3px;
+  font-family: Marcellus, Georgia, serif; font-size: 15px; color: #f3ecff;
   padding: 5px 16px 6px; border-radius: 999px;
   background: rgba(30,20,62,.9); border: 1.5px solid #6e5ab6;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 0 14px rgba(150,110,255,.15);
@@ -70,16 +70,15 @@ h1 span { margin-left: 8px; }
   display: flex; flex-direction: column; align-items: center; gap: 1px;
   transition: transform .12s, border-color .12s, box-shadow .12s;
 }
-.char span { font-family: Fredoka, sans-serif; font-weight: 700; font-size: 19px; color: #fff4e4; text-shadow: 0 2px 0 rgba(20,10,50,.5); }
-.char small { font-family: Fredoka, sans-serif; font-weight: 500; color: #b9aae3; font-size: 13px; }
+.char span { font-family: Marcellus, Georgia, serif; font-size: 19px; color: #fff4e4; }
+.char small { font-family: Marcellus, Georgia, serif; color: var(--muted); font-size: 13px; }
 .char:hover { transform: translateY(-2px); }
 .char.boy.selected { border-color: #ffa94a; box-shadow: 0 0 0 3px rgba(255,150,50,.18), 0 0 26px rgba(255,150,50,.25); }
 .char.ghost.selected { border-color: #7fc8ff; box-shadow: 0 0 0 3px rgba(110,190,255,.2), 0 0 26px rgba(110,190,255,.28); }
 
 .cta {
   width: 100%; padding: 13px 14px 14px; border-radius: 14px; cursor: pointer;
-  font-family: Fredoka, sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .4px;
-  text-shadow: 0 1px 0 rgba(255,255,255,.35);
+  font-family: Marcellus, Georgia, serif; font-size: 19px; letter-spacing: .3px;
   display: flex; align-items: center; justify-content: center; gap: 10px;
   border: 1.5px solid rgba(255,255,255,.35);
   transition: transform .1s, filter .15s, box-shadow .15s;
@@ -104,18 +103,18 @@ h1 span { margin-left: 8px; }
   box-shadow: 0 0 18px rgba(150,110,255,.25);
 }
 .cta.ghostbtn::before { color: #f5c56b; }
-.divider { display: flex; align-items: center; gap: 12px; color: #b9aae3; font-family: Fredoka, sans-serif; font-weight: 500; font-size: 15px; margin: 12px 0; }
+.divider { display: flex; align-items: center; gap: 12px; color: #b9aae3; font-family: Marcellus, Georgia, serif; font-size: 15px; margin: 12px 0; }
 .divider.wide { margin: 20px 0 14px; }
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #6e5ab6, transparent); }
 .join { display: flex; gap: 10px; }
 .join input {
   flex: 1; min-width: 0; padding: 10px; border-radius: 14px; border: 1.5px solid #5f4ca3;
   background: rgba(16,10,36,.9); color: var(--text); text-align: center;
-  font: 700 24px Fredoka, sans-serif; letter-spacing: 12px; text-transform: uppercase;
+  font: 400 24px Marcellus, Georgia, serif; letter-spacing: 12px; text-transform: uppercase;
 }
 .join input::placeholder { color: #6c5e9a; }
 .join input:focus { outline: none; border-color: #8a6ae6; box-shadow: 0 0 16px rgba(150,110,255,.3); }
-.err { color: #ffb08a; min-height: 20px; font-size: 14px; margin: 12px 0 0; font-family: Fredoka, sans-serif; font-weight: 500; }
+.err { color: #ffb08a; min-height: 20px; font-size: 14px; margin: 12px 0 0; font-family: Marcellus, Georgia, serif; }
 
 /* ---------- game ---------- */
 /* game screen: the level fills the window's height, HUD lives in side panels */
