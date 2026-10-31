@@ -365,7 +365,8 @@
           const range = document.createRange();
           range.selectNodeContents($('invite-link'));
           const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
-          $('copy').textContent = 'Select & copy';
+          $('copy').textContent = 'Copy manually';
+          $('copy').title = 'Link selected — press Ctrl+C or Cmd+C to copy';
         }
       };
     }
