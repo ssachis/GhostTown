@@ -118,7 +118,56 @@ h1 span { margin-left: 8px; }
 .err { color: #ffb08a; min-height: 20px; font-size: 14px; margin: 12px 0 0; font-family: Fredoka, sans-serif; font-weight: 500; }
 
 /* ---------- game ---------- */
-#game { width: min(1100px, 100%, calc((100dvh - 120px) * 816 / 600)); }
+/* game screen: the level fills the window's height, HUD lives in side panels */
+#game {
+  position: fixed; inset: 0;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: clamp(10px, 1.4vw, 22px);
+  padding: 6px clamp(8px, 1.2vw, 18px);
+}
+#game[hidden] { display: none !important; }
+#game .stage { width: min(calc((100dvh - 12px) * 816 / 600), calc(100vw - 340px)); }
+.side { display: flex; min-width: 0; }
+.side.left { justify-content: flex-end; }
+.side.right { justify-content: flex-start; }
+.side-card {
+  display: flex; flex-direction: column; align-items: stretch; gap: 14px;
+  width: clamp(130px, 12vw, 190px); padding: 16px 14px;
+  background: linear-gradient(180deg, rgba(48,34,92,.85), rgba(30,21,62,.9));
+  border: 1.5px solid #5f4ca3; border-radius: 18px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.45), 0 0 30px rgba(150,110,255,.14);
+}
+.side-card .level-chip { align-self: center; }
+.timer { text-align: center; font: 700 clamp(30px, 3vw, 42px) Fredoka, sans-serif; color: #fbf6ff; text-shadow: 0 0 12px rgba(167,123,255,.8); line-height: 1; }
+.treats { display: flex; flex-direction: column; gap: 8px; }
+.treats .pick-count { justify-content: space-between; padding: 6px 12px; border-radius: 12px; background: rgba(16,10,36,.6); font: 700 20px Fredoka, sans-serif; }
+.treats img { width: 30px; height: 26px; object-fit: contain; }
+.online { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 13px; text-align: center; }
+.online:not(:has(:not([hidden]))) { display: none; }
+.side-btn {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 10px 14px; border-radius: 12px; cursor: pointer;
+  font: 600 16px Fredoka, sans-serif; color: #efe6ff;
+  background: rgba(16,10,36,.7); border: 1.5px solid #6e5ab6;
+  transition: border-color .15s, box-shadow .15s;
+}
+.side-btn:hover { border-color: #a98cff; box-shadow: 0 0 14px rgba(150,110,255,.35); }
+.side-btn .ico { width: 18px; text-align: center; color: #f5c56b; }
+.side-btn.off { opacity: .5; }
+#game .keys { margin: 0; text-align: left; font-size: 13px; line-height: 1.9; color: #b9aae3; }
+#game .keys .k-title { display: block; font-weight: 700; color: #fff4e4; margin-top: 4px; }
+#game .share { position: absolute; left: 50%; bottom: 5%; transform: translateX(-50%); z-index: 2; margin: 0; max-width: 92%; }
+/* narrow / tall windows: panels go above and below the level */
+@media (max-aspect-ratio: 3/2), (max-width: 900px) {
+  #game { grid-template-columns: 1fr; grid-template-rows: auto auto auto; align-content: center; justify-items: center; gap: 8px; }
+  #game .stage { width: min(calc(100vw - 16px), calc((100dvh - 150px) * 816 / 600)); }
+  .side, .side.left, .side.right { justify-content: center; width: 100%; }
+  .side-card { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; width: auto; padding: 8px 12px; gap: 12px; }
+  .treats { flex-direction: row; }
+  .timer { font-size: 26px; }
+  .side-btn { width: auto; }
+  #game .keys { line-height: 1.5; }
+  #game .keys .k-title { display: inline; margin: 0 4px 0 10px; }
+}
 .hud {
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px;
   margin-bottom: 10px; font-size: 14px;

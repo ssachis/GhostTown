@@ -320,13 +320,14 @@
     const online = S.mode !== 'local';
     $('hud-room').hidden = !online;
     $('hud-partner').hidden = !online;
+    $('hud-ping').hidden = !online;
     $('hud-code').textContent = S.code || '';
     $('hud-role').hidden = !online;
     $('hud-role').textContent = online ? 'You are ' + NAMES[S.role] : '';
     $('hud-role').className = 'tag ' + (S.role || 'ghost');
     $('keys').innerHTML = online
-      ? 'Move <kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd> · Jump <kbd>↑</kbd> <kbd>W</kbd> <kbd>Space</kbd> · Restart <kbd>R</kbd> · Music <kbd>M</kbd> · Pause <kbd>Esc</kbd>'
-      : '<b>Andy</b> <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd> &nbsp;·&nbsp; <b>His Ghost</b> <kbd>A</kbd><kbd>W</kbd><kbd>D</kbd> &nbsp;·&nbsp; Restart <kbd>R</kbd> · Music <kbd>M</kbd> · Pause <kbd>Esc</kbd>';
+      ? '<span class="k-title">Move</span><kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd><span class="k-title">Jump</span><kbd>↑</kbd> <kbd>W</kbd> <kbd>Space</kbd><span class="k-title">More</span>Restart <kbd>R</kbd><br>Pause <kbd>Esc</kbd>'
+      : '<span class="k-title">Andy</span><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><span class="k-title">His Ghost</span><kbd>A</kbd><kbd>W</kbd><kbd>D</kbd><span class="k-title">More</span>Restart <kbd>R</kbd><br>Pause <kbd>Esc</kbd>';
     if (S.mode === 'host') {
       const link = location.origin + location.pathname + '?room=' + S.code;
       $('share').innerHTML = 'Send this to your partner: <code>' + link + '</code> <button id="copy">Copy</button>';
