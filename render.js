@@ -681,7 +681,7 @@
   // The boy uses sprites cut from the GhostTown design sheets (assets/boy-*.png).
   // Until they load, the hand-drawn version below stands in.
   const BOY_IMG = {};
-  const BOY_H = { idle: 47, run: 42.3, jump: 45.5 };      // height in game pixels
+  const BOY_H = { idle: 49.4, run: 44.4, jump: 47.8 };      // height in game pixels
   const BOY_DX = { idle: 1, run: -2, jump: 0 };           // nudge so the body sits over the hitbox
   if (typeof Image !== 'undefined') {
     for (const k of Object.keys(BOY_H)) { const im = new Image(); im.src = 'assets/boy-' + k + '.png'; BOY_IMG[k] = im; }
@@ -722,7 +722,7 @@
       c.fillStyle = 'rgba(200,180,255,.25)';
       c.beginPath(); c.arc(cx - f * 10, by - 2, 2.6, 0, 7); c.arc(cx - f * 13.5, by - 3.5, 1.8, 0, 7); c.fill();
     }
-    if (isMe) marker(c, cx, p.y - 20, t, C.boy);
+    if (isMe) marker(c, cx, p.y - 22, t, C.boy);
   }
 
   function drawBoyVector(c, p, t, isMe) {
