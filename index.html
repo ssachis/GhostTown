@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fire &amp; Water — Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Lobby -->
+  <section id="lobby" class="panel">
+    <h1><span class="fire-t">Fire</span> <span class="amp">&amp;</span> <span class="water-t">Water</span></h1>
+    <p class="sub">Two players · two laptops · one temple</p>
+
+    <div id="create-box">
+      <p class="label">Pick your element</p>
+      <div class="pick">
+        <button class="char fire selected" data-role="fire"><canvas width="60" height="70"></canvas><span>Fire</span></button>
+        <button class="char water" data-role="water"><canvas width="60" height="70"></canvas><span>Water</span></button>
+      </div>
+      <button id="create" class="cta">Create room</button>
+    </div>
+
+    <div class="divider"><span>or join a friend</span></div>
+
+    <div class="join">
+      <input id="code" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false">
+      <button id="join" class="cta ghost">Join</button>
+    </div>
+    <p id="lobby-err" class="err"></p>
+  </section>
+
+  <!-- Game -->
+  <section id="game" hidden>
+    <div class="hud">
+      <div class="hud-left">
+        <span class="room">Room <b id="hud-code">----</b></span>
+        <span id="hud-role" class="tag"></span>
+        <span id="hud-partner" class="partner"></span>
+      </div>
+      <div class="hud-mid"><span id="hud-time">0:00</span></div>
+      <div class="hud-right">
+        <span class="gem red">◆ <b id="hud-red">0/0</b></span>
+        <span class="gem blue">◆ <b id="hud-blue">0/0</b></span>
+        <span id="hud-ping" class="ping"></span>
+      </div>
+    </div>
+    <div class="stage"><canvas id="cv" width="816" height="600"></canvas></div>
+    <div id="share" class="share" hidden></div>
+    <p class="keys">Move <kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd> · Jump <kbd>↑</kbd> <kbd>W</kbd> <kbd>Space</kbd> · Restart <kbd>R</kbd></p>
+  </section>
+
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <script src="shared/game.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
