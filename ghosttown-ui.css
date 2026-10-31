@@ -302,3 +302,11 @@ body{font-family:var(--f-body)}
 #title #howto #howto-close{width:min(240px,75%);min-height:clamp(36px,5vh,46px);font-size:clamp(16px,2.5vh,20px);padding:5px 12px;flex:none}
 @media(max-height:650px){#title #howto .howto-card{gap:4px;padding:9px 15px}#title #howto .hero img{height:44px}#title #howto .hero{gap:2px;padding:5px}#title #howto .howto-rules li{padding:2px 0}#title #howto .howto-note{font-size:11px}}
 @media(max-width:480px){#game .share{padding:13px;gap:10px}#game .share-room{font-size:10px;padding:6px}#game .share-top strong{font-size:17px}#game .share-bottom{flex-wrap:wrap}#game .share code{flex-basis:100%}#game .share button{width:100%}#title #howto .howto-card{padding:10px;gap:6px}#title #howto .howto-heroes{gap:6px}#title #howto .hero img{height:clamp(40px,9vh,65px)}#title #howto .hero small{font-size:11px}#title #howto .howto-rules li{font-size:12px}}
+
+
+/* V16 — visually join the welcome arch to the main logo. */
+#title .game-logo{padding-top:64px}
+#title .game-logo .logo-welcome-arc{top:0;width:266px;height:76px;transform:translateX(-50%) rotate(-1deg)}
+#title .logo-welcome-arc text{font-size:26px;letter-spacing:1px}
+@media(max-width:450px){#title .game-logo{padding-top:60px}#title .game-logo .logo-welcome-arc{top:0;width:245px;height:70px}#title .logo-welcome-arc text{font-size:25px}}
+@media(max-height:680px){#title .game-logo{padding-top:58px}#title .game-logo .logo-welcome-arc{top:0;width:242px;height:68px}}
