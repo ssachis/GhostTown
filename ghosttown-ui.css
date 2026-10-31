@@ -310,3 +310,26 @@ body{font-family:var(--f-body)}
 #title .logo-welcome-arc text{font-size:26px;letter-spacing:1px}
 @media(max-width:450px){#title .game-logo{padding-top:60px}#title .game-logo .logo-welcome-arc{top:0;width:245px;height:70px}#title .logo-welcome-arc text{font-size:25px}}
 @media(max-height:680px){#title .game-logo{padding-top:58px}#title .game-logo .logo-welcome-arc{top:0;width:242px;height:68px}}
+
+
+/* V17 — minimal, deliberately narrow help and share surfaces. */
+#title #howto .howto-card{width:min(530px,calc(100vw - 24px));padding:clamp(12px,2vh,20px);gap:clamp(6px,1.2vh,11px);background:#281a49f8;border:1.5px solid #9779c8;border-radius:20px;box-shadow:0 20px 65px #08051abf}
+#title #howto .howto-card .chip{border:0;background:none;box-shadow:none;font-size:21px;padding:0;color:#ffe5b5}
+#title #howto .howto-heroes{gap:10px}
+#title #howto .hero{background:#3c2a60;border:1px solid #735796;padding:9px 6px;border-radius:13px}
+#title #howto .hero img{height:clamp(45px,9vh,67px)}
+#title #howto .hero b{font-size:18px}
+#title #howto .hero small{font-size:12px;line-height:1.25}
+#title #howto .howto-rules li{font-size:13px;padding:6px 0;border-bottom:1px solid #ad90cf24}
+#title #howto .howto-rules .ic{width:34px}
+#title #howto .howto-rules img{height:22px}
+#title #howto .howto-note{font-size:11px;max-width:440px}
+#title #howto #howto-close{width:180px;min-height:39px;padding:5px 12px;font-size:17px}
+#game .share{width:min(440px,calc(100% - 30px));padding:14px 16px;gap:10px;border-radius:16px;border:1px solid #9573ca;background:#24183ef7;box-shadow:0 12px 38px #0a051ac0}
+#game .share-top strong{font-size:18px}
+#game .share-top small{font-size:12px}
+#game .share-icon{width:34px;height:34px;font-size:20px;border-radius:10px}
+#game .share-bottom{gap:8px}
+#game .share code{padding:10px;font-size:11px}
+#game .share button{min-height:39px;padding:8px 13px;font-size:13px}
+@media(max-height:620px){#title #howto .howto-card{gap:4px;padding:9px}#title #howto .hero img{height:40px}#title #howto .hero{padding:4px}#title #howto .howto-rules li{padding:2px 0}#title #howto .howto-note{font-size:10px}}
