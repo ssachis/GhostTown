@@ -44,14 +44,31 @@ button { font-family: inherit; }
   background: radial-gradient(ellipse at center, transparent 45%, rgba(8,4,24,.55) 100%); }
 .col { display: flex; flex-direction: column; align-items: stretch; min-width: 0; }
 .col.left { align-items: center; }
+.sub-wrap { display: none; }
 h1 {
-  font-family: Pacifico, cursive; font-weight: 400; font-size: clamp(40px, 7vh, 60px); line-height: 1.35; margin: 0 0 2px;
-  color: #fff7ea; letter-spacing: 0;
-  text-shadow: 0 0 6px rgba(255,230,190,.6), 0 0 18px rgba(167,123,255,.85), 0 0 42px rgba(130,80,255,.55);
+  font-family: Pacifico, cursive; font-weight: 400;
+  font-size: clamp(44px, 7.6vh, 64px); line-height: 1.15;
+  margin: 0; padding: 0 .1em .38em;        /* room for the G loop, which drops ~.4em below the baseline */
+  color: #fff6e6; letter-spacing: .5px;
+  text-shadow:
+    0 2px 0 #c9a8ff, 0 4px 0 #6a47c8,      /* embossed edge like the sheets */
+    0 0 10px rgba(255,236,200,.55),
+    0 0 26px rgba(167,123,255,.85),
+    0 0 52px rgba(130,80,255,.5);
 }
-h1 .o { width: 30px; height: 33px; vertical-align: 0; margin: 0 1px; filter: drop-shadow(0 0 8px rgba(180,200,255,.8)); }
-h1 span { margin-left: 8px; }
-.sub { font-family: Marcellus, Georgia, serif; color: #cbbdf0; margin: 0 0 clamp(10px, 2.2vh, 20px); font-size: 16px; }
+h1 .o { width: .5em; height: .55em; vertical-align: -.02em; margin: 0 .02em; filter: drop-shadow(0 2px 0 #6a47c8) drop-shadow(0 0 8px rgba(180,200,255,.9)); }
+h1 span { margin-left: .14em; }
+.sub {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-family: Marcellus, Georgia, serif; font-size: 15px; letter-spacing: 1px;
+  color: #efe4ff; margin: 0 0 clamp(12px, 2.4vh, 22px);
+  text-shadow: 0 0 10px rgba(167,123,255,.5);
+}
+.sub::before, .sub::after {
+  content: ''; width: 34px; height: 1px; flex: none;
+  background: linear-gradient(90deg, transparent, #f5c56b);
+}
+.sub::after { background: linear-gradient(90deg, #f5c56b, transparent); }
 .chip {
   display: inline-flex; align-items: center; gap: 8px;
   font-family: Marcellus, Georgia, serif; font-size: 15px; color: #f3ecff;
