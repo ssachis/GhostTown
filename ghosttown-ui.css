@@ -202,3 +202,13 @@ body{font-family:var(--f-body)}
 #title .title-scene{border-color:#b89add;box-shadow:0 16px 38px #0b062a99,0 0 24px #a07aff22}
 @media(max-width:450px){#title .game-logo{padding-top:58px;margin-bottom:-28px}#title .game-logo .logo-welcome{width:250px;height:78px;font-size:21px}#title .game-logo .logo-ghost{font-size:clamp(60px,16vw,78px)}#title .game-logo .logo-town{font-size:clamp(56px,15vw,73px)}#title .menu-bat{width:56px;height:43px;top:27px;right:-8px}}
 @media(max-height:680px){#title .game-logo{padding-top:50px}#title .game-logo .logo-welcome{font-size:19px;height:72px}#title .menu-bat{width:50px;right:0}}
+
+
+/* V10 — rebalance the title hierarchy based on the actual screenshot. */
+#title .game-logo{padding-top:78px;margin-bottom:-23px}
+#title .game-logo .logo-welcome{top:0;width:310px;height:106px;font-size:32px;line-height:1;letter-spacing:0}
+#title .game-logo .logo-ghost{font-size:clamp(58px,10vw,74px)}
+#title .game-logo .logo-town{font-size:clamp(55px,9.5vw,69px);margin-left:34px;margin-top:-3px}
+#title .menu-bat{top:51px;right:4px;width:53px;height:42px}
+@media(max-width:450px){#title .game-logo{padding-top:70px;margin-bottom:-19px}#title .game-logo .logo-welcome{top:0;width:270px;height:94px;font-size:27px}#title .game-logo .logo-ghost{font-size:clamp(54px,14vw,66px)}#title .game-logo .logo-town{font-size:clamp(51px,13vw,63px)}#title .menu-bat{top:45px;right:1px;width:45px;height:36px}}
+@media(max-height:680px){#title .game-logo{padding-top:64px}#title .game-logo .logo-welcome{font-size:25px;height:88px}#title .game-logo .logo-ghost{font-size:56px}#title .game-logo .logo-town{font-size:53px}}
