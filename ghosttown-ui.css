@@ -240,3 +240,24 @@ body{font-family:var(--f-body)}
 #title .logo-welcome>span:nth-child(10){left:207px;top:22px;transform:rotate(21deg)}
 @media(max-width:450px){#title .game-logo{padding-top:62px}#title .game-logo .logo-welcome{top:12px;width:230px;height:53px;font-size:27px}}
 @media(max-height:680px){#title .game-logo{padding-top:60px}#title .game-logo .logo-welcome{top:8px;font-size:26px;height:53px}}
+
+
+/* V13: cohesive wordmark with real curved text; no per-letter spacing artifacts. */
+#title .game-logo{padding-top:67px;margin-bottom:-23px}
+#title .game-logo .logo-welcome{display:none}
+#title .game-logo .logo-welcome-arc{position:absolute;display:block;top:0;left:50%;width:290px;height:82px;overflow:visible;transform:translateX(-50%) rotate(-3deg);filter:drop-shadow(0 3px 0 #56316d) drop-shadow(0 4px 5px #100726)}
+#title .logo-welcome-arc text{fill:#ffdc89;font-family:'Fredoka',sans-serif;font-size:27px;font-weight:700;letter-spacing:2px}
+#title .game-logo .logo-ghost{font-size:clamp(58px,10vw,74px)}
+#title .game-logo .logo-town{font-size:clamp(55px,9.5vw,69px)}
+#title .menu-stars{position:absolute;inset:-20px -30px auto;height:190px;z-index:1;pointer-events:none}
+#title .menu-stars i{position:absolute;display:block;width:4px;height:4px;border-radius:50%;background:#ffe5a0;box-shadow:0 0 9px #ffe5a099;animation:menu-star-twinkle 5s ease-in-out infinite}
+#title .menu-stars i:nth-child(1){left:9%;top:36%;width:8px;height:8px;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%)}
+#title .menu-stars i:nth-child(2){left:87%;top:14%;animation-delay:-2s}
+#title .menu-stars i:nth-child(3){left:94%;top:72%;width:7px;height:7px;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);animation-delay:-3s}
+#title .menu-stars i:nth-child(4){left:4%;top:90%;width:3px;height:3px;animation-delay:-1s}
+#title .menu-stars i:nth-child(5){left:72%;top:5%;width:3px;height:3px;animation-delay:-4s}
+#title .menu-stars i:nth-child(6){left:24%;top:6%;width:3px;height:3px;animation-delay:-2.7s}
+@keyframes menu-star-twinkle{0%,100%{opacity:.45;transform:scale(.85)}50%{opacity:1;transform:scale(1.12)}}
+@media(max-width:450px){#title .game-logo{padding-top:61px}#title .game-logo .logo-welcome-arc{width:255px;height:75px;top:0}#title .logo-welcome-arc text{font-size:27px}#title .menu-stars{inset:-10px -10px auto}}
+@media(max-height:680px){#title .game-logo{padding-top:59px}#title .game-logo .logo-welcome-arc{height:70px;width:255px}#title .menu-stars{height:130px}}
+@media(prefers-reduced-motion:reduce){#title .menu-stars i{animation:none!important}}
