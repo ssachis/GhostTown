@@ -100,6 +100,7 @@
 
   // title screen -> menu
   $('play-game').onclick = () => { Sound.unlock(); $('title').hidden = true; $('lobby').hidden = false; };
+  $('back').onclick = () => { $('lobby').hidden = true; $('title').hidden = false; };
   $('create').onclick = () => host(chosen);
   $('local').onclick = () => startLocal();
   $('join').onclick = () => join($('code').value);

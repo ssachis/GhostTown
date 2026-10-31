@@ -7,18 +7,53 @@
   <meta name="description" content="A spooky two-player co-op platformer: Andy and his ghost. Play online across two laptops or together on one.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Tinos:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261031m">
+  <link rel="stylesheet" href="style.css?v=20261031p">
 </head>
 <body>
-  <!-- Title screen: the GhostTown key art -->
+  <!-- Title screen: the GhostTown key art, brought to life -->
   <section id="title">
-    <img class="title-art" src="assets/title.jpg" alt="GhostTown: Andy and his ghost in the haunted ruins">
-    <button id="play-game" class="cta yellow play-game">Play Game</button>
+    <div class="title-scene" id="title-scene">
+      <img class="title-art" id="title-art" src="assets/title.jpg" alt="GhostTown: Andy and his ghost in the haunted ruins">
+      <canvas id="title-fx" aria-hidden="true"></canvas>
+    </div>
+    <div class="title-actions">
+      <button id="play-game" class="cta yellow">Play Game</button>
+      <button id="how-to" class="cta purple">How to Play</button>
+    </div>
+
+    <div id="howto" class="modal" hidden>
+      <div class="howto-card" role="dialog" aria-labelledby="howto-h">
+        <div class="chip" id="howto-h">How to Play</div>
+        <div class="howto-heroes">
+          <div class="hero">
+            <img src="assets/boy-idle.png" alt="">
+            <b>Andy</b>
+            <span><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd></span>
+            <small>wades through lava<br>grabs candy</small>
+          </div>
+          <div class="hero">
+            <img src="assets/ghost-idle.png" alt="">
+            <b>His Ghost</b>
+            <span><kbd>A</kbd><kbd>W</kbd><kbd>D</kbd></span>
+            <small>floats through black holes<br>grabs pumpkins</small>
+          </div>
+        </div>
+        <ul class="howto-rules">
+          <li><span class="ic"><img src="assets/btn-blue.png" alt=""></span>Stand on a glowing plate to open the gate.</li>
+          <li><span class="ic"><img src="assets/lever.png" alt=""></span>Push the lever to raise the swing.</li>
+          <li><span class="ic"><span class="dot brew"></span></span>Green brew is deadly to both of you.</li>
+          <li><span class="ic"><img src="assets/door-boy.png" alt=""><img src="assets/door-ghost.png" alt=""></span>Both reach your own door to win.</li>
+        </ul>
+        <p class="howto-note">Playing online? Each of you can use the arrows or W A D on your own laptop.</p>
+        <button id="howto-close" class="cta yellow">Got it</button>
+      </div>
+    </div>
   </section>
 
   <!-- Lobby: choose a hero and how to play -->
   <section id="lobby" hidden>
     <canvas id="bg" aria-hidden="true"></canvas>
+    <button id="back" class="back-btn" title="Back to title">← Back</button>
     <div class="panel">
       <div class="col left">
         <div class="chip">Choose your hero</div>
@@ -98,9 +133,10 @@
   </section>
 
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-  <script src="shared/game.js?v=20261031m"></script>
-  <script src="audio.js?v=20261031m"></script>
-  <script src="render.js?v=20261031m"></script>
-  <script src="client.js?v=20261031m"></script>
+  <script src="shared/game.js?v=20261031p"></script>
+  <script src="audio.js?v=20261031p"></script>
+  <script src="render.js?v=20261031p"></script>
+  <script src="client.js?v=20261031p"></script>
+  <script src="title.js?v=20261031p"></script>
 </body>
 </html>

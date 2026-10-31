@@ -681,7 +681,7 @@
   // The boy uses sprites cut from the GhostTown design sheets (assets/boy-*.png).
   // Until they load, the hand-drawn version below stands in.
   const BOY_IMG = {};
-  const BOY_H = { idle: 49.4, run: 44.4, jump: 47.8 };      // height in game pixels
+  const BOY_H = { idle: 51.9, run: 46.6, jump: 50.2 };      // height in game pixels
   const BOY_DX = { idle: 1, run: -2, jump: 0 };           // nudge so the body sits over the hitbox
   if (typeof Image !== 'undefined') {
     for (const k of Object.keys(BOY_H)) { const im = new Image(); im.src = 'assets/boy-' + k + '.png'; BOY_IMG[k] = im; }
@@ -722,7 +722,7 @@
       c.fillStyle = 'rgba(200,180,255,.25)';
       c.beginPath(); c.arc(cx - f * 10, by - 2, 2.6, 0, 7); c.arc(cx - f * 13.5, by - 3.5, 1.8, 0, 7); c.fill();
     }
-    if (isMe) marker(c, cx, p.y - 22, t, C.boy);
+    if (isMe) marker(c, cx, p.y - 24, t, C.boy);
   }
 
   function drawBoyVector(c, p, t, isMe) {
@@ -1043,7 +1043,7 @@
     if (p.grounded) { c.fillStyle = 'rgba(10,5,30,.22)'; c.beginPath(); c.ellipse(cx, p.y + PH, 9, 2, 0, 0, 7); c.fill(); }
     lightPool(c, cx, p.y + 16 + bob, 30, '170,160,255', 0.2);
     // sized so his body is ~73% of Andy's height and floats a little off the floor (matches the key art)
-    const GH = { 'ghost-idle': [43.2, 3.8], 'ghost-float': [41.1, 4.0], 'ghost-excited': [36.5, 5.0] }[n];
+    const GH = { 'ghost-idle': [39.7, 3.5], 'ghost-float': [37.8, 3.7], 'ghost-excited': [33.6, 4.6] }[n];
     sprite(c, n, cx - f * 2, p.y + PH - 1 - GH[1] + bob, 0, GH[0], { anchor: 'bottom', flip: f < 0, rot: moving ? f * 0.06 : 0 });
     if (moving) for (let i = 0; i < 3; i++) {
       const a = Math.sin(t * 6 + i * 2);
