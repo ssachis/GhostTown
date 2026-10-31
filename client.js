@@ -333,6 +333,8 @@
       $('copy').onclick = () => { navigator.clipboard.writeText(link); $('copy').textContent = 'Copied'; };
     }
     history.replaceState(null, '', location.pathname);
+    // the controls hint fades after a few seconds so the level has the whole screen
+    setTimeout(() => $('keys').classList.add('faded'), 7000);
     updateHud();
     if (online) setInterval(() => { if (S.conn && S.conn.open) S.conn.send({ t: 'ping', c: performance.now() }); }, 2000);
     startLoop();
@@ -413,7 +415,7 @@
     const cx = LW / 2, cy = 150;
     ctx.fillStyle = 'rgba(30,20,62,.82)'; ctx.strokeStyle = '#6e5ab6'; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.roundRect(cx - 170, cy - 48, 340, 86, 20); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#f5c56b'; ctx.font = '400 15px Marcellus, Georgia, serif';
+    ctx.fillStyle = '#f5c56b'; ctx.font = '600 15px Fredoka, sans-serif';
     ctx.fillText('✦  Level ' + (w.levelIndex + 1) + '  ✦', cx, cy - 20);
     ctx.font = '400 30px Pacifico, cursive'; ctx.fillStyle = '#fff7ea';
     ctx.shadowColor = '#a77bff'; ctx.shadowBlur = 16;
@@ -421,7 +423,7 @@
     ctx.restore();
   }
 
-  let staticLayer = null;
+  let staticLayer = null, introStart = 0;
   function startLoop() {
     staticLayer = Art.buildStatic(S.world, LW, LH, RES);
     let last = performance.now(), acc = 0;
@@ -447,7 +449,7 @@
     ctx.fillText(title, LW / 2, LH / 2 - 6);
     ctx.shadowBlur = 0;
     if (sub) {
-      ctx.fillStyle = '#d6cbef'; ctx.font = '400 19px Marcellus, Georgia, serif';
+      ctx.fillStyle = '#d6cbef'; ctx.font = '600 19px Fredoka, sans-serif';
       sub.split('\n').forEach((line, i) => ctx.fillText(line, LW / 2, LH / 2 + 34 + i * 26));
     }
   }
@@ -462,6 +464,19 @@
     const w = S.world;
     if (!staticLayer) return;
     ctx.setTransform(RES, 0, 0, RES, 0, 0);
+    // camera intro: start close on the two heroes, then glide out to the whole level
+    if (!introStart && w.status === 'playing') introStart = performance.now();
+    if (introStart) {
+      const k = Math.min(1, Math.max(0, (performance.now() - introStart - 350) / 1700));
+      const e = k * k * (3 - 2 * k), z = 1 + 1.15 * (1 - e);
+      if (z > 1.001) {
+        const a = w.players.boy, b = w.players.ghost;
+        const fx = (a.x + b.x) / 2 + 9, fy = (a.y + b.y) / 2 + 10;
+        const vw = LW / z, vh = LH / z;
+        const left = Math.min(Math.max(fx - vw / 2, 0), LW - vw), top = Math.min(Math.max(fy - vh / 2, 0), LH - vh);
+        ctx.setTransform(RES * z, 0, 0, RES * z, -left * RES * z, -top * RES * z);
+      }
+    }
     const opts = { me: S.mode === 'local' ? null : S.role };
     if (S.mode === 'guest') {
       const ip = interpolated();
@@ -470,6 +485,7 @@
     if (S.mode !== 'local' && !S.connected) opts.hide = { [other(S.role)]: true };
     Art.drawFrame(ctx, w, staticLayer, t, opts);
     drawParts(t * 1000);
+    ctx.setTransform(RES, 0, 0, RES, 0, 0);
     if (S.mode === 'local' || S.connected) titleCard(w);
 
     if (S.mode !== 'local' && !S.connected) {
