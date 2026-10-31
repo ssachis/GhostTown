@@ -212,3 +212,13 @@ body{font-family:var(--f-body)}
 #title .menu-bat{top:51px;right:4px;width:53px;height:42px}
 @media(max-width:450px){#title .game-logo{padding-top:70px;margin-bottom:-19px}#title .game-logo .logo-welcome{top:0;width:270px;height:94px;font-size:27px}#title .game-logo .logo-ghost{font-size:clamp(54px,14vw,66px)}#title .game-logo .logo-town{font-size:clamp(51px,13vw,63px)}#title .menu-bat{top:45px;right:1px;width:45px;height:36px}}
 @media(max-height:680px){#title .game-logo{padding-top:64px}#title .game-logo .logo-welcome{font-size:25px;height:88px}#title .game-logo .logo-ghost{font-size:56px}#title .game-logo .logo-town{font-size:53px}}
+
+
+/* V11 — the ghost in the logo blinks both eyes together, with a quick double blink. */
+#title .logo-ghost-icon i{transform-origin:center center;animation:ghost-eye-blink 6.8s infinite}
+@keyframes ghost-eye-blink{
+  0%,39%,42%,45%,100%{transform:scaleY(1)}
+  40%,44%{transform:scaleY(.09)}
+  41%,43%{transform:scaleY(1)}
+}
+@media(prefers-reduced-motion:reduce){#title .logo-ghost-icon i{animation:none!important}}
