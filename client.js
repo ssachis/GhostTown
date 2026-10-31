@@ -15,7 +15,7 @@
   const SNAPSHOT_EVERY = 2;
   const MAX_QUEUE = 8;
   const INTERP_MS = 100;
-  const NAMES = { boy: 'Boy', ghost: 'Ghost' };
+  const NAMES = { boy: 'Andy', ghost: 'his Ghost' };
 
   const $ = (id) => document.getElementById(id);
   const cv = $('cv');
@@ -322,11 +322,11 @@
     $('hud-partner').hidden = !online;
     $('hud-code').textContent = S.code || '';
     $('hud-role').hidden = !online;
-    $('hud-role').textContent = online ? 'You are the ' + NAMES[S.role] : '';
+    $('hud-role').textContent = online ? 'You are ' + NAMES[S.role] : '';
     $('hud-role').className = 'tag ' + (S.role || 'ghost');
     $('keys').innerHTML = online
       ? 'Move <kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd> · Jump <kbd>↑</kbd> <kbd>W</kbd> <kbd>Space</kbd> · Restart <kbd>R</kbd> · Music <kbd>M</kbd> · Pause <kbd>Esc</kbd>'
-      : '<b>Boy</b> <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd> &nbsp;·&nbsp; <b>Ghost</b> <kbd>A</kbd><kbd>W</kbd><kbd>D</kbd> &nbsp;·&nbsp; Restart <kbd>R</kbd> · Music <kbd>M</kbd> · Pause <kbd>Esc</kbd>';
+      : '<b>Andy</b> <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd> &nbsp;·&nbsp; <b>His Ghost</b> <kbd>A</kbd><kbd>W</kbd><kbd>D</kbd> &nbsp;·&nbsp; Restart <kbd>R</kbd> · Music <kbd>M</kbd> · Pause <kbd>Esc</kbd>';
     if (S.mode === 'host') {
       const link = location.origin + location.pathname + '?room=' + S.code;
       $('share').innerHTML = 'Send this to your partner: <code>' + link + '</code> <button id="copy">Copy</button>';
@@ -455,8 +455,8 @@
   }
 
   const DEATH = {
-    lava: ['The ghost melted in the lava!', '#ffae5c'],
-    void: ['The boy fell into the black hole!', '#b9a6ff'],
+    lava: ['His Ghost melted in the lava!', '#ffae5c'],
+    void: ['Andy fell into the black hole!', '#b9a6ff'],
     goo: ["Splash! Into the witch's brew!", '#b6ff5c'],
   };
 
