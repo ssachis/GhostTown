@@ -98,6 +98,8 @@
   const lobbyErr = (msg) => { $('lobby-err').textContent = msg || ''; };
   const busy = (on) => { $('create').disabled = $('join').disabled = $('local').disabled = on; };
 
+  // title screen -> menu
+  $('play-game').onclick = () => { Sound.unlock(); $('title').hidden = true; $('lobby').hidden = false; };
   $('create').onclick = () => host(chosen);
   $('local').onclick = () => startLocal();
   $('join').onclick = () => join($('code').value);
@@ -105,6 +107,7 @@
   $('code').addEventListener('input', (e) => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
 
   const params = new URLSearchParams(location.search);
+  if (params.get('room')) { $('title').hidden = true; $('lobby').hidden = false; }
   if (params.get('room')) { $('code').value = params.get('room').toUpperCase(); join(params.get('room')); }
 
   function makeCode() {

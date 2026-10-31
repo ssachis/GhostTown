@@ -7,16 +7,20 @@
   <meta name="description" content="A spooky two-player co-op platformer: Andy and his ghost. Play online across two laptops or together on one.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Tinos:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261031k">
+  <link rel="stylesheet" href="style.css?v=20261031l">
 </head>
 <body>
-  <!-- Lobby: full-screen title screen over the painted night sky -->
-  <section id="lobby">
+  <!-- Title screen: the GhostTown key art -->
+  <section id="title">
+    <img class="title-art" src="assets/title.jpg" alt="GhostTown: Andy and his ghost in the haunted ruins">
+    <button id="play-game" class="cta yellow play-game">Play Game</button>
+  </section>
+
+  <!-- Lobby: choose a hero and how to play -->
+  <section id="lobby" hidden>
     <canvas id="bg" aria-hidden="true"></canvas>
     <div class="panel">
       <div class="col left">
-      <h1>Gh<svg class="o" viewBox="0 0 24 26" aria-hidden="true"><path d="M2 12a10 10 0 0 1 20 0v12l-3.3-2.5L15.3 24 12 21.5 8.7 24l-3.4-2.5L2 24z" fill="#fff"/><ellipse cx="8.6" cy="11" rx="1.6" ry="2.2" fill="#1e1430"/><ellipse cx="15.4" cy="11" rx="1.6" ry="2.2" fill="#1e1430"/><path d="M10 15.5q2 2.6 4 0z" fill="#1e1430"/></svg>st<span>Town</span></h1>
-        <p class="sub">Andy, his ghost, and one very haunted temple</p>
         <div class="chip">Choose your hero</div>
         <div class="pick">
           <button class="char boy selected" data-role="boy"><canvas width="240" height="208"></canvas><span>Andy</span><small>loves candy</small></button>
@@ -94,9 +98,9 @@
   </section>
 
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-  <script src="shared/game.js?v=20261031k"></script>
-  <script src="audio.js?v=20261031k"></script>
-  <script src="render.js?v=20261031k"></script>
-  <script src="client.js?v=20261031k"></script>
+  <script src="shared/game.js?v=20261031l"></script>
+  <script src="audio.js?v=20261031l"></script>
+  <script src="render.js?v=20261031l"></script>
+  <script src="client.js?v=20261031l"></script>
 </body>
 </html>

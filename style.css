@@ -260,3 +260,23 @@ kbd {
 #fs-btn .fs-out { display: none; }
 #fs-btn.on .fs-in { display: none; }
 #fs-btn.on .fs-out { display: block; }
+
+/* ---------- title screen ---------- */
+#title { position: fixed; inset: 0; z-index: 5; background: #160f36; overflow: hidden; }
+#title[hidden] { display: none !important; }
+.title-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; }
+#title::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(transparent 60%, rgba(10,6,30,.55)); }
+.cta.play-game {
+  position: absolute; z-index: 1; left: 50%; bottom: 9%; transform: translateX(-50%);
+  width: auto; padding: 16px 46px 17px; font-size: clamp(26px, 3.2vw, 36px);
+  animation: playGlow 2.4s ease-in-out infinite;
+}
+.cta.play-game:hover { transform: translateX(-50%) translateY(-2px); }
+.cta.play-game:active { transform: translateX(-50%) translateY(2px); }
+@keyframes playGlow {
+  0%, 100% { box-shadow: 0 6px 0 #a8620a, 0 0 26px rgba(255,190,50,.45), inset 0 2px 0 rgba(255,255,255,.6); }
+  50%      { box-shadow: 0 6px 0 #a8620a, 0 0 48px rgba(255,200,70,.8), inset 0 2px 0 rgba(255,255,255,.6); }
+}
+/* menu without the logo: hero picker sits centred in the left column */
+.col.left { justify-content: center; }
