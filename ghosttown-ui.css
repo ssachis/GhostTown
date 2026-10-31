@@ -1,0 +1,36 @@
+/* Ghost Town — playful UI refresh, layered after style.css */
+:root{--f-title:'Fredoka',sans-serif;--f-body:'Nunito',sans-serif}
+body{font-family:var(--f-body)}
+#title{background:#160e35}
+#title::after{background:linear-gradient(90deg,rgba(15,8,40,.24),transparent 62%),linear-gradient(0deg,rgba(18,9,43,.62),transparent 38%),radial-gradient(ellipse at center,transparent 48%,rgba(10,5,27,.34))}
+.title-actions{left:50%;top:auto;bottom:clamp(25px,8vh,90px);width:min(335px,80vw);gap:12px}
+.title-actions .cta{min-height:58px;letter-spacing:.2px}
+.title-actions .cta:nth-child(1){font:650 clamp(23px,2vw,30px) var(--f-title);padding:14px 24px}
+.title-actions .cta:nth-child(2){font:600 clamp(17px,1.4vw,21px) var(--f-title);padding:12px 20px}
+.cta{font-family:var(--f-title);font-weight:600;outline-offset:5px}
+.cta:focus-visible,.char:focus-visible,.back-btn:focus-visible,.tool:focus-visible{outline:3px solid #ffe59a}
+.cta.yellow,.cta.orange{font-family:var(--f-title);font-weight:650;background:linear-gradient(#fff0ac 0%,#ffcd56 48%,#f5a72f 100%);border:2px solid #ffefb3;color:#4f2b56;box-shadow:0 5px 0 #a96a2c,0 10px 25px #0d062a66,inset 0 2px 0 #ffffffbd}
+.cta.purple,.cta.blue,.cta.ghostbtn{background:linear-gradient(#9775e1,#6343b1);border:2px solid #c3a9ff;box-shadow:0 4px 0 #342065,0 10px 25px #0d062a66,inset 0 2px 0 #ffffff55}
+.cta:hover{filter:brightness(1.06);transform:translateY(-3px)}
+.cta:active{transform:translateY(2px)}
+#lobby::after{background:linear-gradient(0deg,#130b34a6,#130b3466),radial-gradient(ellipse at center,transparent 20%,#08041d88 100%)}
+.panel{width:min(900px,96vw);border-radius:32px;border:1.5px solid #b49ae680;background:linear-gradient(145deg,#38265ddf,#21163fe8);box-shadow:0 30px 85px #09041bc9,inset 0 2px 0 #ffffff20;backdrop-filter:blur(14px);gap:clamp(20px,3vw,42px);padding:clamp(22px,4vw,42px)}
+.chip{font-family:var(--f-title);font-weight:600;letter-spacing:.1px;background:#241742c9;border:1px solid #a486e4aa;padding:9px 18px;color:#fff1dc}
+.char{border-radius:24px;border:2px solid #7960af;background:linear-gradient(160deg,#4a337b,#241743);box-shadow:inset 0 2px 0 #ffffff1f,0 9px 18px #12082244;transition:transform .2s,border-color .2s,box-shadow .2s}
+.char:hover{transform:translateY(-5px)}
+.char span{font:650 23px var(--f-title)}
+.char small{font:700 13px var(--f-body);color:#e3d3ff}
+.char.boy.selected{border-color:#ffcf72;box-shadow:0 0 0 3px #ffbe502c,0 12px 30px #e99f3929}
+.char.ghost.selected{border-color:#a6e8ff;box-shadow:0 0 0 3px #8adfff2b,0 12px 30px #7ec6fc31}
+.divider{font:700 13px var(--f-body);text-transform:uppercase;letter-spacing:1px;color:#d0c1f5}
+.join input{font:800 20px var(--f-title);letter-spacing:5px;border:2px solid #8065b2;background:#160e31d9}
+.back-btn{font:650 16px var(--f-title);padding:11px 19px;background:#2b1b56d9;border-color:#aa8bea}
+.howto-card,.pause-card{border-radius:28px;border:1.5px solid #b399e7;background:linear-gradient(160deg,#493373f7,#22153ff9);box-shadow:0 26px 75px #09051ac0}
+.hero{border-radius:19px;border-color:#8e70bd;background:#251846bb}
+.hero b{font:650 21px var(--f-title)}
+.hero small,.howto-rules li,.howto-note{font-family:var(--f-body)}
+.stage{border-radius:18px;border-color:#7656ae;box-shadow:0 23px 70px #09041bcc,0 0 36px #a87bff22}
+.tool{background:#2e205bbd;border-color:#9474d0;font-family:var(--f-title);opacity:.95}
+@media(max-width:700px){.title-actions{bottom:7vh}.panel{padding:20px 16px;border-radius:24px;overflow:auto}.char{width:min(42vw,165px)}.pick{gap:10px}}
+@media(max-height:600px){.title-actions{bottom:14px;gap:7px}.title-actions .cta{min-height:42px}.panel{padding:14px}.char canvas{width:90px}}
+@media(prefers-reduced-motion:reduce){.title-scene,.title-actions .cta,.title-art,.cta{animation:none!important;transition:none!important}}
