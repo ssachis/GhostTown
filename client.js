@@ -355,8 +355,19 @@
       : '<span class="k-title">Andy</span><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><br><span class="k-title">His Ghost</span><kbd>A</kbd><kbd>W</kbd><kbd>D</kbd><br><span class="k-title">Keys</span>Restart <kbd>R</kbd> · Pause <kbd>Esc</kbd> · Full screen <kbd>F</kbd>';
     if (S.mode === 'host') {
       const link = location.origin + location.pathname + '?room=' + S.code;
-      $('share').innerHTML = 'Send this to your partner: <code>' + link + '</code> <button id="copy">Copy</button>';
-      $('copy').onclick = () => { navigator.clipboard.writeText(link); $('copy').textContent = 'Copied'; };
+      $('share').innerHTML = '<div class="share-top"><span class="share-icon" aria-hidden="true">✦</span><div><strong>Invite your partner</strong><small>Send this link to play together</small></div><span class="share-room">Room ' + S.code + '</span></div><div class="share-bottom"><code id="invite-link"></code><button id="copy" type="button" aria-label="Copy invite link">Copy link</button></div>';
+      $('invite-link').textContent = link;
+      $('copy').onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(link);
+          $('copy').textContent = '✓ Copied!';
+        } catch (err) {
+          const range = document.createRange();
+          range.selectNodeContents($('invite-link'));
+          const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+          $('copy').textContent = 'Select & copy';
+        }
+      };
     }
     history.replaceState(null, '', location.pathname);
     updateHud();
