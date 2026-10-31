@@ -1,15 +1,18 @@
 /*
- * Shared game rules — loaded by the Node server (authoritative simulation)
- * and by the browser (client-side prediction + rendering).
+ * GhostTown — shared game rules. Loaded by every browser: the host (or a
+ * same-laptop game) runs the real simulation; an online guest uses the same
+ * physics to predict its own movement.
  *
  * Map legend
- *   #  stone wall            .  empty
- *   L  lava pool (kills Water)   W  water pool (kills Fire)   G  goo (kills both)
- *   r  red gem (Fire only)   b  blue gem (Water only)
- *   f  Fire spawn            a  Water spawn
- *   D  Fire exit door        E  Water exit door
- *   o  pressure button       l  lever
- * Moving parts (gates, lifts) are listed in each level's `platforms`.
+ *   #  stone wall               .  empty
+ *   L  orange lava  (Boy is safe, kills the Ghost)
+ *   V  black hole   (Ghost is safe, swallows the Boy)
+ *   G  witch's brew (kills both)
+ *   c  candy   (Boy collects)   p  pumpkin (Ghost collects)
+ *   1  Boy spawn                2  Ghost spawn
+ *   D  Boy's exit door          E  Ghost's exit door
+ *   o  pressure button          l  lever
+ * Moving parts (gates, lifts) live in each level's `platforms`; torches in `decor`.
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
@@ -19,48 +22,71 @@
 
   const TILE = 24;
   const DT = 1 / 60;
-  const PHYS = { GRAVITY: 1500, MOVE: 190, JUMP: 520, MAX_FALL: 720, STEP_UP: 13 };
+  const PHYS = {
+    MOVE: 190,          // top run speed (px/s)
+    ACCEL: 2400,        // ground acceleration
+    DECEL: 2800,        // ground braking
+    AIR_ACCEL: 1700,
+    AIR_DECEL: 1000,
+    JUMP: 545,          // take-off speed
+    G_UP: 1450,         // gravity while rising with jump held
+    G_CUT: 3400,        // gravity while rising after jump released (short hop)
+    G_DOWN: 2000,       // gravity while falling
+    APEX: 0.55,         // softer gravity near the top of a held jump
+    MAX_FALL: 760,
+    COYOTE: 0.09,       // can still jump this long after walking off a ledge
+    BUFFER: 0.12,       // a jump pressed this early before landing still fires
+    STEP_UP: 13,
+  };
   const PW = 18;
   const PH = 34;
-  const POOLS = { L: 'lava', W: 'water', G: 'goo' };
-  const ROLES = ['fire', 'water'];
+  const POOLS = { L: 'lava', V: 'void', G: 'goo' };
+  const ROLES = ['boy', 'ghost'];
+  const KILLS = { lava: ['ghost'], void: ['boy'], goo: ['boy', 'ghost'] };
 
   const LEVELS = [
     {
-      name: 'Temple of Embers',
+      name: 'The Haunted Hall',
       map: [
         '##################################',
         '#................................#',
         '#................................#',
         '#................................#',
-        '#.............r..b...............#',
+        '#.............c..p...............#',
         '#............######..............#',
         '#................................#',
         '#..D..E..........................#',
         '############################.....#',
         '#................................#',
         '#................................#',
-        '#........r...........b...........#',
+        '#........c...........p...........#',
         '#.........................l......#',
-        '#....#########GGG#################',
+        '#....#########GG##################',
         '#................................#',
         '#................................#',
-        '###................b....r........#',
-        '###...o.......o..................#',
-        '##################WWW##LLL###....#',
+        '###..............................#',
+        '###...o.......o....p....c........#',
+        '##################VV###LL####....#',
         '#................................#',
         '#................................#',
-        '#.........r.....b.............####',
-        '#.f.a.........................####',
-        '#########LLL###WWW################',
+        '#.............................####',
+        '#.1.2.....c.....p.............####',
+        '#########LL####VV#################',
         '##################################',
       ],
       platforms: [
-        // Gate on the second floor: retracts into the ceiling while ANY button is pressed.
+        // Iron gate on the second floor: retracts while ANY button is pressed.
         { id: 'gate', kind: 'retract', trigger: 'button', x: 10 * TILE + 6, y: 14 * TILE, w: 12, closedH: 96, openH: 0, speed: 320 },
-        // Lift on the right: rises to the top floor while the lever points right.
+        // Wooden swing on chains (right side): rises to the top floor while the lever points right.
         { id: 'lift', kind: 'move', trigger: 'lever', x: 28 * TILE, w: 96, h: 12, downY: 13 * TILE - 12, upY: 8 * TILE, speed: 70 },
       ],
+      // purely visual; [col, row] of the tile the prop sits in
+      decor: {
+        lanterns: [[7, 20], [25, 20], [26, 15], [6, 10], [19, 10], [10, 3]],
+        banners: [[13, 19], [21, 14], [12, 9], [23, 1]],
+        candles: [[22, 22], [8, 17], [30, 12], [9, 7]],
+        graves: [[19, 22], [24, 12]],
+      },
     },
   ];
 
@@ -69,19 +95,13 @@
     return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
   }
   function pRect(p) { return { x: p.x, y: p.y, w: PW, h: PH }; }
-
   function tileAt(world, c, r) {
     if (r < 0 || r >= world.rows || c < 0 || c >= world.cols) return '#';
     return world.grid[r][c];
   }
+  function platRect(pl) { return { x: pl.x, y: pl.y, w: pl.w, h: pl.h }; }
 
-  function platRect(pl) {
-    return pl.kind === 'retract'
-      ? { x: pl.x, y: pl.y, w: pl.w, h: pl.h }
-      : { x: pl.x, y: pl.y, w: pl.w, h: pl.h };
-  }
-
-  // Every solid rectangle overlapping r (walls, the stone half of pools, platforms).
+  // Every solid rectangle overlapping r: walls, the stone half of pools, platforms.
   function solidsOverlapping(world, r) {
     const out = [];
     const c0 = Math.floor(r.x / TILE), c1 = Math.floor((r.x + r.w - 1e-6) / TILE);
@@ -107,19 +127,19 @@
     const L = LEVELS[levelIndex];
     const grid = L.map.map((row) => row.split(''));
     const w = {
-      levelIndex, name: L.name, cols: grid[0].length, rows: grid.length,
+      levelIndex, name: L.name, cols: grid[0].length, rows: grid.length, decor: L.decor || {},
       grid, gems: [], buttons: [], levers: [], doors: {}, spawns: {},
-      platforms: [], players: {}, status: 'lobby', ticks: 0, deadTimer: 0, deadRole: null,
+      platforms: [], players: {}, status: 'lobby', ticks: 0, deadTimer: 0, deadRole: null, deadCause: null,
     };
     for (let r = 0; r < grid.length; r++) {
       for (let c = 0; c < grid[r].length; c++) {
         const ch = grid[r][c];
         const x = c * TILE, y = r * TILE;
-        if (ch === 'r' || ch === 'b') w.gems.push({ x: x + 4, y: y + 4, w: 16, h: 16, kind: ch === 'r' ? 'fire' : 'water', taken: false });
-        else if (ch === 'f') w.spawns.fire = { x: x + 3, y: y + TILE - PH };
-        else if (ch === 'a') w.spawns.water = { x: x + 3, y: y + TILE - PH };
-        else if (ch === 'D') w.doors.fire = { x: x - 6, y: y + TILE - 46, w: 36, h: 46, open: false };
-        else if (ch === 'E') w.doors.water = { x: x - 6, y: y + TILE - 46, w: 36, h: 46, open: false };
+        if (ch === 'c' || ch === 'p') w.gems.push({ x: x + 4, y: y + 4, w: 16, h: 16, kind: ch === 'c' ? 'boy' : 'ghost', taken: false });
+        else if (ch === '1') w.spawns.boy = { x: x + 3, y: y + TILE - PH };
+        else if (ch === '2') w.spawns.ghost = { x: x + 3, y: y + TILE - PH };
+        else if (ch === 'D') w.doors.boy = { x: x - 6, y: y + TILE - 46, w: 36, h: 46, open: false };
+        else if (ch === 'E') w.doors.ghost = { x: x - 6, y: y + TILE - 46, w: 36, h: 46, open: false };
         else if (ch === 'o') w.buttons.push({ x: x + 2, y: y + TILE - 6, w: 20, h: 6, pressed: false });
         else if (ch === 'l') w.levers.push({ x: x, y: y, w: TILE, h: TILE, on: false });
         else continue;
@@ -138,23 +158,42 @@
 
   function newPlayer(world, role) {
     const s = world.spawns[role];
-    return { role, x: s.x, y: s.y, vx: 0, vy: 0, grounded: false, groundId: null, facing: 1, alive: true, inDoor: false };
+    return {
+      role, x: s.x, y: s.y, vx: 0, vy: 0, grounded: false, groundId: null, facing: 1, alive: true, inDoor: false,
+      coy: 0, jb: 0, jh: false, jumpedNow: false,
+    };
   }
 
-  function resetLevel(world) {
-    const fresh = createWorld(world.levelIndex);
-    for (const k of ['gems', 'buttons', 'levers', 'doors', 'platforms', 'players']) world[k] = fresh[k];
-    world.ticks = 0; world.deadTimer = 0; world.deadRole = null;
+  function resetLevel(world, levelIndex) {
+    const fresh = createWorld(levelIndex == null ? world.levelIndex : levelIndex);
+    for (const k of ['levelIndex', 'name', 'cols', 'rows', 'grid', 'decor', 'spawns', 'gems', 'buttons', 'levers', 'doors', 'platforms', 'players']) world[k] = fresh[k];
+    world.ticks = 0; world.deadTimer = 0; world.deadRole = null; world.deadCause = null;
     world.status = 'playing';
   }
 
-  // ---------- physics (shared: server simulates, client predicts) ----------
+  // ---------- physics (shared: host simulates, guest predicts) ----------
+  function approach(v, target, amt) {
+    return v < target ? Math.min(v + amt, target) : Math.max(v - amt, target);
+  }
+
   function stepPlayer(p, inp, world, dt) {
     const dir = (inp.r ? 1 : 0) - (inp.l ? 1 : 0);
-    p.vx = dir * PHYS.MOVE;
+    const accel = dir ? (p.grounded ? PHYS.ACCEL : PHYS.AIR_ACCEL) : (p.grounded ? PHYS.DECEL : PHYS.AIR_DECEL);
+    p.vx = approach(p.vx, dir * PHYS.MOVE, accel * dt);
     if (dir) p.facing = dir;
-    if (inp.j && p.grounded) { p.vy = -PHYS.JUMP; p.grounded = false; }
-    p.vy = Math.min(p.vy + PHYS.GRAVITY * dt, PHYS.MAX_FALL);
+
+    // coyote time + jump buffer make jumps forgiving; releasing early gives a short hop
+    p.coy = p.grounded ? PHYS.COYOTE : Math.max(0, p.coy - dt);
+    const pressed = !!inp.j && !p.jh;
+    p.jh = !!inp.j;
+    p.jb = pressed ? PHYS.BUFFER : Math.max(0, p.jb - dt);
+    p.jumpedNow = false;
+    if (p.jb > 0 && p.coy > 0) {
+      p.vy = -PHYS.JUMP; p.jb = 0; p.coy = 0; p.grounded = false; p.jumpedNow = true;
+    }
+    let g = p.vy < 0 ? (inp.j ? PHYS.G_UP : PHYS.G_CUT) : PHYS.G_DOWN;
+    if (inp.j && Math.abs(p.vy) < 70) g *= PHYS.APEX;
+    p.vy = Math.min(p.vy + g * dt, PHYS.MAX_FALL);
 
     // horizontal, with a small step-up so pool lips and lift edges don't snag
     const dx = p.vx * dt;
@@ -198,10 +237,10 @@
     }
   }
 
-  // ---------- server-side rules ----------
+  // ---------- host-side rules ----------
   function feetRect(p) { return { x: p.x + 2, y: p.y + PH - 4, w: PW - 4, h: 8 }; }
 
-  // One input step for one player: movement + things only that player triggers.
+  // One input step for one player: movement + the things only that player triggers.
   function stepPlayerFull(world, role, inp) {
     const p = world.players[role];
     if (!p.alive) return;
@@ -219,18 +258,16 @@
       else if (prevCx > mid && cx <= mid) lv.on = false;
     }
 
-    // pools: check the liquid band of any pool tile the player is touching
     const c0 = Math.floor(p.x / TILE), c1 = Math.floor((p.x + PW - 1e-6) / TILE);
     const rr0 = Math.floor(p.y / TILE), rr1 = Math.floor((p.y + PH - 1e-6) / TILE);
     for (let row = rr0; row <= rr1; row++) {
       for (let c = c0; c <= c1; c++) {
         const kind = POOLS[tileAt(world, c, row)];
-        if (!kind) continue;
+        if (!kind || KILLS[kind].indexOf(role) < 0) continue;
         const liquid = { x: c * TILE + 3, y: row * TILE + 4, w: TILE - 6, h: 9 };
-        if (!overlap(r, liquid)) continue;
-        if (kind === 'goo' || (kind === 'lava' && role === 'water') || (kind === 'water' && role === 'fire')) {
+        if (overlap(r, liquid) && p.alive) {
           p.alive = false;
-          world.status = 'dead'; world.deadRole = role; world.deadTimer = 90;
+          world.status = 'dead'; world.deadRole = role; world.deadCause = kind; world.deadTimer = 100;
         }
       }
     }
@@ -258,9 +295,8 @@
       if (cur === target) continue;
       const step = Math.sign(target - cur) * Math.min(Math.abs(target - cur), pl.speed * DT);
       const riders = players.filter((p) => p.grounded && p.groundId === pl.id);
-      const next = Object.assign({}, platRect(pl));
+      const next = platRect(pl);
       if (prop === 'h') next.h = cur + step; else next.y = cur + step;
-      // don't crush anyone who isn't riding
       const blocked = players.some((p) => riders.indexOf(p) < 0 && overlap(pRect(p), next));
       if (blocked) continue;
       pl[prop] = cur + step;
@@ -273,7 +309,7 @@
       p.inDoor = p.alive && p.grounded && pr.x >= d.x - 4 && pr.x + PW <= d.x + d.w + 4 && overlap(pr, d);
       d.open = p.inDoor;
     }
-    if (world.players.fire.inDoor && world.players.water.inDoor) world.status = 'won';
+    if (world.players.boy.inDoor && world.players.ghost.inDoor) world.status = 'won';
   }
 
   // ---------- network snapshots ----------
@@ -282,10 +318,14 @@
     const p = {};
     for (const role of ROLES) {
       const q = world.players[role];
-      p[role] = { x: round(q.x), y: round(q.y), vx: q.vx, vy: round(q.vy), g: q.grounded ? 1 : 0, gid: q.groundId, f: q.facing, a: q.alive ? 1 : 0, d: q.inDoor ? 1 : 0, ack: acks[role] || 0 };
+      p[role] = {
+        x: round(q.x), y: round(q.y), vx: round(q.vx), vy: round(q.vy), g: q.grounded ? 1 : 0, gid: q.groundId,
+        f: q.facing, a: q.alive ? 1 : 0, d: q.inDoor ? 1 : 0, c: round(q.coy), b: round(q.jb), h: q.jh ? 1 : 0,
+        ack: acks[role] || 0,
+      };
     }
     return {
-      t: 'state', st: world.status, tk: world.ticks, dr: world.deadRole, p,
+      t: 'state', lvl: world.levelIndex, st: world.status, tk: world.ticks, dr: world.deadRole, dc: world.deadCause, p,
       pl: world.platforms.map((pl) => round(pl.kind === 'retract' ? pl.h : pl.y)),
       gm: world.gems.map((g) => (g.taken ? 1 : 0)).join(''),
       bt: world.buttons.map((b) => (b.pressed ? 1 : 0)).join(''),
@@ -294,20 +334,24 @@
   }
 
   function applySnapshot(world, s) {
-    world.status = s.st; world.ticks = s.tk; world.deadRole = s.dr;
+    if (s.lvl !== world.levelIndex) resetLevel(world, s.lvl);
+    world.status = s.st; world.ticks = s.tk; world.deadRole = s.dr; world.deadCause = s.dc;
     world.platforms.forEach((pl, i) => { if (pl.kind === 'retract') pl.h = s.pl[i]; else pl.y = s.pl[i]; });
     world.gems.forEach((g, i) => { g.taken = s.gm[i] === '1'; });
     world.buttons.forEach((b, i) => { b.pressed = s.bt[i] === '1'; });
     world.levers.forEach((l, i) => { l.on = s.lv[i] === '1'; });
     for (const role of ROLES) {
       const q = s.p[role], p = world.players[role];
-      Object.assign(p, { x: q.x, y: q.y, vx: q.vx, vy: q.vy, grounded: !!q.g, groundId: q.gid, facing: q.f, alive: !!q.a, inDoor: !!q.d });
+      Object.assign(p, {
+        x: q.x, y: q.y, vx: q.vx, vy: q.vy, grounded: !!q.g, groundId: q.gid, facing: q.f, alive: !!q.a,
+        inDoor: !!q.d, coy: q.c, jb: q.b, jh: !!q.h,
+      });
       world.doors[role].open = !!q.d;
     }
   }
 
   return {
-    TILE, DT, PHYS, PW, PH, POOLS, ROLES, LEVELS,
+    TILE, DT, PHYS, PW, PH, POOLS, ROLES, KILLS, LEVELS,
     overlap, createWorld, resetLevel, stepPlayer, stepPlayerFull, stepWorld, snapshot, applySnapshot, solidsOverlapping,
   };
 });

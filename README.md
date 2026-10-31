@@ -1,42 +1,45 @@
 # GhostTown
+
 <img width="1672" height="941" alt="Ghost Town Character and Level Concept Sheet (1)" src="https://github.com/user-attachments/assets/9e44e308-449a-49d6-8946-15551281e9f1" />
-— online co-op
 
-
-A two-player co-op temple platformer in the spirit of the classic fire-and-water puzzle games, playable **across two laptops** over a direct peer-to-peer connection. It's a static site (plain HTML/JS, no build step, no server), so it runs on GitHub Pages.
+A spooky two-player co-op platformer: a curly-haired boy and his ghost explore a haunted temple. Play **together on one laptop** or **online across two laptops** over a direct peer-to-peer connection. It's a static site (plain HTML/JS, no build step, no server), so it runs on GitHub Pages.
 
 ## Play
-1. Player 1 opens the site, picks **Fire** or **Water**, clicks **Create room**.
-2. Send the link (or the 4-letter code) to Player 2. They open it and they're in.
-3. Each player controls their own character from their own keyboard.
+- **One laptop:** click **Play on one laptop**. The Boy uses the arrow keys, the Ghost uses W A D.
+- **Two laptops:** Player 1 picks the Boy or the Ghost and clicks **Create online room**, then sends the link (or the 4-letter code). Player 2 opens it and they're in. Each player can use arrows or WASD.
+- **R** restarts the level, **M** toggles the music.
 
-| Action | Keys |
-| --- | --- |
-| Move | ← → or A D |
-| Jump | ↑, W or Space |
-| Restart | R |
+## Rules
+- **Orange lava:** the Boy can wade through it; it melts the Ghost.
+- **Black hole:** the Ghost floats through it; it swallows the Boy.
+- **Witch's brew (green):** deadly to both.
+- The Boy collects **candy**, the Ghost collects **pumpkins**. Each treat floats right above a pool, so you have to wade through your own hazard to grab it.
+- Glowing **buttons** open the iron gate while someone stands on one. The **lever** raises the chain swing.
+- Both players standing in their own door (orange for the Boy, blue for the Ghost) clears the level. If anyone dies, the level restarts for both.
 
-**Rules:** Fire can walk through lava, Water through water; green goo kills both. Fire collects red gems, Water collects blue. Buttons open the gold gate while someone stands on them; the lever raises the purple lift. Both players standing at their own door clears the level. If anyone dies, the level restarts for both.
+Jumps are forgiving: tap for a short hop, hold for a full jump. You can still jump a moment after running off a ledge, and a jump pressed just before landing still counts.
 
 ## Test locally
-Any static server works (opening `index.html` as a file won't, because of browser security rules):
+Any static server works (opening `index.html` as a file won't):
 
 ```bash
 python3 -m http.server 8000
-# open http://localhost:8000 in two browser WINDOWS side by side
+# open http://localhost:8000
 ```
-Use two separate windows rather than two tabs: browsers slow down background tabs, which stalls the game. For two laptops, open `http://<your-laptop-ip>:8000` on the second one, or just use the GitHub Pages URL.
+To test online mode on one machine, open two browser **windows** side by side. Don't use two tabs, because browsers slow down background tabs.
 
-## How the networking works
-- [PeerJS](https://peerjs.com) (WebRTC) connects the two browsers directly. PeerJS's free public broker is only used to find each other; game traffic goes browser-to-browser.
-- The room creator is the **host**: their browser runs the authoritative game at 60 ticks/sec and sends snapshots ~30×/sec.
-- The **guest** sends inputs every tick, predicts its own movement immediately (so controls feel instant), and reconciles with the host's snapshots. The other player and moving parts are interpolated ~100 ms behind for smoothness.
-- Some strict networks (certain university/corporate Wi-Fi) block direct WebRTC connections. If joining hangs, try a phone hotspot; the long-term fix is adding a TURN server to the PeerJS config.
+## How online play works
+- [PeerJS](https://peerjs.com) (WebRTC) connects the two browsers directly. PeerJS's free public broker only helps them find each other.
+- The room creator is the **host**: their browser runs the real game at 60 ticks/sec and sends snapshots ~30×/sec.
+- The **guest** sends inputs every tick and predicts its own movement immediately, so controls feel instant. It corrects itself from the host's snapshots. The other player is drawn ~100 ms behind for smoothness.
+- Some strict networks (certain university or office Wi-Fi) block direct WebRTC. If joining hangs, try a phone hotspot. The long-term fix is adding a TURN server.
 
 ## Files
-- `index.html`, `style.css` — page and lobby
-- `client.js` — networking, host loop, guest prediction, rendering
-- `shared/game.js` — game rules, physics and levels (shared by host and guest)
+- `index.html`, `style.css`: page and lobby
+- `client.js`: modes (same laptop / host / guest), networking, game loop
+- `render.js`: all the art, drawn with canvas shapes (no image files)
+- `audio.js`: original music and sound effects, synthesized with Web Audio
+- `shared/game.js`: rules, physics and levels
 
 ## Editing levels
-Levels are ASCII maps in `shared/game.js` (34×25 tiles, legend at the top of the file). Gates and lifts go in each level's `platforms` list.
+Levels are ASCII maps in `shared/game.js` (34×25 tiles; the legend is at the top of the file). Gates and lifts go in each level's `platforms` list, lanterns, banners, candles and graves in `decor`. Add more entries to `LEVELS` for levels 2 and 3.

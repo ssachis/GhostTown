@@ -3,31 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fire &amp; Water — Online</title>
+  <title>GhostTown</title>
+  <meta name="description" content="A spooky two-player co-op platformer: a boy and his ghost. Play online across two laptops or together on one.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- Lobby -->
   <section id="lobby" class="panel">
-    <h1><span class="fire-t">Fire</span> <span class="amp">&amp;</span> <span class="water-t">Water</span></h1>
-    <p class="sub">Two players · two laptops · one temple</p>
+    <h1>Gh<svg class="o" viewBox="0 0 24 26" aria-hidden="true"><path d="M2 12a10 10 0 0 1 20 0v12l-3.3-2.5L15.3 24 12 21.5 8.7 24l-3.4-2.5L2 24z" fill="#fff"/><ellipse cx="8.6" cy="11" rx="1.6" ry="2.2" fill="#1e1430"/><ellipse cx="15.4" cy="11" rx="1.6" ry="2.2" fill="#1e1430"/><path d="M10 15.5q2 2.6 4 0z" fill="#1e1430"/></svg>st<span>Town</span></h1>
+    <p class="sub">A boy, his ghost, and one very haunted temple</p>
 
-    <div id="create-box">
-      <p class="label">Pick your element</p>
-      <div class="pick">
-        <button class="char fire selected" data-role="fire"><canvas width="60" height="70"></canvas><span>Fire</span></button>
-        <button class="char water" data-role="water"><canvas width="60" height="70"></canvas><span>Water</span></button>
-      </div>
-      <button id="create" class="cta">Create room</button>
+    <div class="pick">
+      <button class="char boy selected" data-role="boy"><canvas width="104" height="96"></canvas><span>Boy</span><small>wants candy</small></button>
+      <button class="char ghost" data-role="ghost"><canvas width="104" height="96"></canvas><span>Ghost</span><small>wants pumpkins</small></button>
     </div>
 
-    <div class="divider"><span>or join a friend</span></div>
+    <button id="create" class="cta">Create online room</button>
+    <button id="local" class="cta alt">Play on one laptop</button>
 
+    <div class="divider"><span>or join a friend</span></div>
     <div class="join">
       <input id="code" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false">
-      <button id="join" class="cta ghost">Join</button>
+      <button id="join" class="cta ghostbtn">Join</button>
     </div>
     <p id="lobby-err" class="err"></p>
   </section>
@@ -36,24 +35,27 @@
   <section id="game" hidden>
     <div class="hud">
       <div class="hud-left">
-        <span class="room">Room <b id="hud-code">----</b></span>
+        <span id="hud-room" class="room">Room <b id="hud-code">----</b></span>
         <span id="hud-role" class="tag"></span>
         <span id="hud-partner" class="partner"></span>
       </div>
       <div class="hud-mid"><span id="hud-time">0:00</span></div>
       <div class="hud-right">
-        <span class="gem red">◆ <b id="hud-red">0/0</b></span>
-        <span class="gem blue">◆ <b id="hud-blue">0/0</b></span>
+        <span class="pick-count candy" title="Candy"><i></i><b id="hud-candy">0/0</b></span>
+        <span class="pick-count pumpkin" title="Pumpkins"><i></i><b id="hud-pumpkin">0/0</b></span>
         <span id="hud-ping" class="ping"></span>
+        <button id="music" class="icon-btn" title="Music (M)">♪</button>
       </div>
     </div>
     <div class="stage"><canvas id="cv" width="816" height="600"></canvas></div>
     <div id="share" class="share" hidden></div>
-    <p class="keys">Move <kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd> · Jump <kbd>↑</kbd> <kbd>W</kbd> <kbd>Space</kbd> · Restart <kbd>R</kbd></p>
+    <p id="keys" class="keys"></p>
   </section>
 
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="shared/game.js"></script>
+  <script src="audio.js"></script>
+  <script src="render.js"></script>
   <script src="client.js"></script>
 </body>
 </html>
