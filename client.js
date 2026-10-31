@@ -78,7 +78,7 @@
       if (S.mode) return;
       const t = now / 1000;
       c.clearRect(0, 0, 240, 208);
-      c.save(); c.scale(2, 2); c.translate(60 - 9 * 1.7, role === 'boy' ? 22 : 26); c.scale(1.7, 1.7);
+      c.save(); c.scale(2, 2); c.translate(60 - 9 * (role === 'boy' ? 1.85 : 1.7), role === 'boy' ? 22 : 26); c.scale(role === 'boy' ? 1.85 : 1.7, role === 'boy' ? 1.85 : 1.7);
       Art.drawPlayer(c, { role, x: 0, y: 0, vx: 0, facing: 1, alive: true, grounded: true }, t, false);
       c.restore();
       requestAnimationFrame(anim);
