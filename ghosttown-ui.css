@@ -359,3 +359,13 @@ body{font-family:var(--f-body)}
 #game .share button{min-width:91px;min-height:40px;transition:background .15s ease}
 #game .share button:focus-visible{outline:2px solid #ffe5a0;outline-offset:3px}
 @media(max-height:600px){#game .share{bottom:8%;padding:10px 12px;gap:7px}}
+
+
+/* V20 — prevent the invite card from overflowing or clipping on narrow screens. */
+#game .share{box-sizing:border-box;position:fixed;left:50%;right:auto;bottom:clamp(16px,10dvh,110px);transform:translateX(-50%);width:min(390px,calc(100vw - 32px));max-width:calc(100vw - 32px);min-width:0;display:flex;flex-direction:column;align-items:stretch;flex-wrap:nowrap;overflow:hidden;z-index:30}
+#game .share-top,#game .share-bottom{box-sizing:border-box;width:100%;min-width:0;max-width:100%;display:flex;flex-wrap:nowrap;align-items:center}
+#game .share-top>div{min-width:0;flex:1}
+#game .share-room{flex:0 0 auto;max-width:44%;white-space:nowrap}
+#game .share code{box-sizing:border-box;display:block;flex:1 1 0;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#game .share button{box-sizing:border-box;display:block;flex:0 0 auto;width:auto;max-width:45%;white-space:nowrap;padding:9px 12px;font-size:12px}
+@media(max-width:380px){#game .share{width:calc(100vw - 20px);max-width:calc(100vw - 20px);padding:11px}#game .share-top strong{font-size:15px}#game .share-room{font-size:10px}#game .share button{min-width:76px;padding:8px;font-size:11px}}
