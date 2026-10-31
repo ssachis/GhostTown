@@ -1042,7 +1042,9 @@
     const bob = Math.sin(t * 3) * 1.8;
     if (p.grounded) { c.fillStyle = 'rgba(10,5,30,.22)'; c.beginPath(); c.ellipse(cx, p.y + PH, 9, 2, 0, 0, 7); c.fill(); }
     lightPool(c, cx, p.y + 16 + bob, 30, '170,160,255', 0.2);
-    sprite(c, n, cx - f * 2, p.y + PH - 1 + bob, 0, 42, { anchor: 'bottom', flip: f < 0, rot: moving ? f * 0.06 : 0 });
+    // sized so his body is ~73% of Andy's height and floats a little off the floor (matches the key art)
+    const GH = { 'ghost-idle': [43.2, 3.8], 'ghost-float': [41.1, 4.0], 'ghost-excited': [36.5, 5.0] }[n];
+    sprite(c, n, cx - f * 2, p.y + PH - 1 - GH[1] + bob, 0, GH[0], { anchor: 'bottom', flip: f < 0, rot: moving ? f * 0.06 : 0 });
     if (moving) for (let i = 0; i < 3; i++) {
       const a = Math.sin(t * 6 + i * 2);
       if (a < 0) continue;
