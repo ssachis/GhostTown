@@ -180,3 +180,25 @@ body{font-family:var(--f-body)}
 
 /* Ensure the title actually disappears when Play Game switches to the lobby. */
 #title[hidden]{display:none!important}
+
+
+/* V9: legible arched welcome, a larger, more expressive title composition. */
+#title .game-logo{padding-top:64px;margin-bottom:-36px;overflow:visible}
+#title .game-logo .logo-welcome{position:absolute;top:1px;left:50%;width:295px;height:92px;margin:0;transform:translateX(-50%) rotate(-2deg);display:block;font:800 24px/1 'Fredoka',sans-serif;letter-spacing:0;color:#ffe2a1;text-transform:none;text-shadow:0 3px 0 #624078,0 5px 12px #100726}
+#title .logo-welcome>span{position:absolute;left:calc(50% - 12px);top:0;width:24px;height:100%;text-align:center;transform-origin:50% 100%;padding-top:0}
+#title .logo-welcome>span:nth-child(1){transform:rotate(-38deg)}
+#title .logo-welcome>span:nth-child(2){transform:rotate(-30deg)}
+#title .logo-welcome>span:nth-child(3){transform:rotate(-22deg)}
+#title .logo-welcome>span:nth-child(4){transform:rotate(-14deg)}
+#title .logo-welcome>span:nth-child(5){transform:rotate(-6deg)}
+#title .logo-welcome>span:nth-child(6){transform:rotate(2deg)}
+#title .logo-welcome>span:nth-child(7){transform:rotate(10deg)}
+#title .logo-welcome>span:nth-child(8){display:none}
+#title .logo-welcome>span:nth-child(9){transform:rotate(24deg)}
+#title .logo-welcome>span:nth-child(10){transform:rotate(32deg)}
+#title .game-logo .logo-ghost{font-size:clamp(72px,14vw,96px)}
+#title .game-logo .logo-town{font-size:clamp(67px,13vw,89px)}
+#title .menu-bat{top:35px;right:-28px;width:72px;height:55px;filter:drop-shadow(0 0 6px #c69dff55);animation-duration:7s}
+#title .title-scene{border-color:#b89add;box-shadow:0 16px 38px #0b062a99,0 0 24px #a07aff22}
+@media(max-width:450px){#title .game-logo{padding-top:58px;margin-bottom:-28px}#title .game-logo .logo-welcome{width:250px;height:78px;font-size:21px}#title .game-logo .logo-ghost{font-size:clamp(60px,16vw,78px)}#title .game-logo .logo-town{font-size:clamp(56px,15vw,73px)}#title .menu-bat{width:56px;height:43px;top:27px;right:-8px}}
+@media(max-height:680px){#title .game-logo{padding-top:50px}#title .game-logo .logo-welcome{font-size:19px;height:72px}#title .menu-bat{width:50px;right:0}}
