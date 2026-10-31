@@ -102,3 +102,41 @@ body{font-family:var(--f-body)}
 #lobby::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 12% 20%,#b58cfc20,transparent 32%),radial-gradient(circle at 88% 70%,#ffc07812,transparent 30%);z-index:0}
 #lobby .panel::before{content:"";position:absolute;inset:-100px;pointer-events:none;background:radial-gradient(circle at 45% 20%,#ffffff09,transparent 55%);z-index:-1}
 @media(max-width:760px){#lobby .panel{width:min(480px,96vw);grid-template-columns:1fr;padding:20px 18px;gap:16px}#lobby .col .chip{font-size:19px;margin-bottom:10px}#lobby .char{padding:6px 6px 10px}#lobby .char canvas{width:100px}#lobby .col.right .cta{min-height:46px}#lobby .divider{margin:6px 0}#lobby .divider.wide{margin:8px 0}#title .title-actions{bottom:6vh}}
+
+
+/* GhostTown V4 — compact portrait-inspired menu. */
+#title{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;padding:22px;background:radial-gradient(ellipse at 50% 36%,#37215f 0%,#20143f 45%,#100b29 100%);overflow:auto}
+#title::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 16% 20%,#a88bfa12,transparent 30%),radial-gradient(circle at 85% 85%,#e5a7ff0d,transparent 28%);z-index:0}
+#title::after{display:none}
+#title .title-shell{position:relative;z-index:2;width:min(410px,100%);display:flex;flex-direction:column;align-items:center;gap:18px;animation:menu-arrive .6s ease-out both}
+#title .game-logo{display:block;font:650 clamp(49px,8vw,72px)/1 var(--f-title);letter-spacing:-2px;margin:0 0 2px;text-align:center;background:none;color:#f5eaff;filter:drop-shadow(0 5px 0 #39215f) drop-shadow(0 8px 12px #0c0626);white-space:nowrap}
+#title .game-logo::after{display:none}
+#title .game-logo span{color:#f4eaff}
+#title .game-logo em{font-style:normal;color:#ffcf79}
+#title .title-scene{position:relative;inset:auto;display:block;transform:none!important;width:100%;aspect-ratio:1.62/1;overflow:hidden;border-radius:24px;background:linear-gradient(180deg,#38265e 0%,#60418b 54%,#44305e 100%);border:2px solid #a58bd0;box-shadow:0 16px 35px #0b062a99,inset 0 1px 0 #ffffff38;filter:none;transition:none;will-change:auto}
+#title .title-moon{position:absolute;top:11%;right:17%;width:24%;aspect-ratio:1;border-radius:50%;background:#d7c7ff;box-shadow:0 0 0 12px #d4baff12,0 0 35px #dac7ff80}
+#title .title-hills{position:absolute;left:-10%;width:120%;border-radius:50% 50% 0 0}
+#title .title-hills.far{height:40%;bottom:18%;background:#392652;clip-path:polygon(0 80%,10% 50%,21% 70%,32% 25%,42% 55%,58% 35%,70% 70%,84% 30%,100% 75%,100% 100%,0 100%)}
+#title .title-hills.near{height:24%;bottom:0;background:#2c1c48;clip-path:polygon(0 50%,12% 30%,25% 65%,41% 38%,54% 70%,68% 34%,80% 60%,100% 30%,100% 100%,0 100%)}
+#title .title-houses{position:absolute;inset:0}
+#title .title-houses i{position:absolute;bottom:21%;width:11%;height:23%;background:#322144;border-radius:3px 3px 0 0;box-shadow:inset 6px 0 0 #ffffff06}
+#title .title-houses i::before{content:"";position:absolute;left:-18%;top:-31%;width:136%;height:40%;background:#322144;clip-path:polygon(50% 0,100% 100%,0 100%)}
+#title .title-houses i::after{content:"";position:absolute;top:30%;left:40%;width:24%;height:22%;background:#ffd58b;box-shadow:0 0 12px #ffc96d90}
+#title .title-houses i:nth-child(1){left:7%;height:16%;width:9%}
+#title .title-houses i:nth-child(2){left:23%;height:28%;width:12%}
+#title .title-houses i:nth-child(3){left:47%;height:20%;width:10%}
+#title .title-houses i:nth-child(4){left:70%;height:32%;width:11%}
+#title .title-houses i:nth-child(5){left:87%;height:20%;width:9%}
+#title .title-ground{position:absolute;bottom:-9%;left:-5%;width:110%;height:24%;background:radial-gradient(ellipse at 50% 0%,#71539b,#2b1b4d 80%);border-radius:50%}
+#title #title-fx{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+#title .title-actions{position:static;transform:none;display:flex;flex-direction:column;width:100%;gap:12px;max-width:340px;margin:3px auto 0}
+#title .title-actions .cta{width:100%;border-radius:16px;min-height:55px;animation:none;font:650 23px var(--f-title)}
+#title .title-actions .cta:nth-child(2){font:600 20px var(--f-title);min-height:50px}
+#title #play-game::before{animation:none;display:none}
+#title .title-actions .cta.yellow::after{display:none}
+#title .title-actions .cta:focus-visible{outline:3px solid #fff3be}
+#title .modal{position:fixed}
+@keyframes menu-arrive{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-height:680px){#title .title-shell{width:min(330px,100%);gap:10px}#title .game-logo{font-size:49px}#title .title-actions{gap:8px}#title .title-actions .cta{min-height:45px;font-size:20px}#title .title-actions .cta:nth-child(2){min-height:42px}}
+@media(max-width:450px){#title{padding:16px}#title .title-shell{gap:16px}#title .game-logo{font-size:clamp(45px,12vw,65px)}}
+@media(prefers-reduced-motion:reduce){#title .title-shell{animation:none}}
