@@ -268,3 +268,37 @@ body{font-family:var(--f-body)}
 #title .game-logo .logo-welcome-arc{top:-13px;height:91px;width:290px;transform:translateX(-50%) rotate(-2deg)}
 @media(max-width:450px){#title .game-logo{padding-top:67px}#title .game-logo .logo-welcome-arc{top:-11px;height:85px;width:255px}}
 @media(max-height:680px){#title .game-logo{padding-top:64px}#title .game-logo .logo-welcome-arc{top:-9px;height:79px}}
+
+
+/* V15 — invitation card: compact, centered, with readable URL and clear action. */
+#game .share{position:absolute;left:50%;bottom:clamp(12px,4%,28px);transform:translateX(-50%);z-index:8;display:flex;flex-direction:column;align-items:stretch;gap:13px;width:min(510px,calc(100% - 28px));max-width:none;margin:0;padding:18px 20px;border:1.5px solid #aa89df;border-radius:20px;background:linear-gradient(150deg,#342355f7,#1d143af9);box-shadow:0 18px 48px #0a061bd9,0 0 0 3px #a77bff16;font-family:var(--f-body);color:#f8f0ff}
+#game .share[hidden]{display:none!important}
+#game .share-top{display:flex;align-items:center;gap:12px;min-width:0}
+#game .share-icon{width:42px;height:42px;flex:none;display:grid;place-items:center;border-radius:14px;background:#68479e;color:#ffe39a;font-size:24px}
+#game .share-top>div{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+#game .share-top strong{font:700 21px/1.1 var(--f-title);color:#fff1dc}
+#game .share-top small{font:600 12px/1.3 var(--f-body);color:#d6c7ed}
+#game .share-room{flex:none;padding:7px 10px;border:1px solid #9477c4;border-radius:999px;background:#26183f;font:800 12px var(--f-body);color:#ffe0a0}
+#game .share-bottom{display:flex;align-items:center;gap:9px;min-width:0}
+#game .share code{display:block;flex:1;min-width:0;padding:12px;border:1px solid #5c4681;border-radius:10px;background:#140d2a;color:#e4d5ff;font:600 12px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;word-break:normal}
+#game .share button{flex:none;min-height:43px;padding:10px 15px;border:1px solid #ffe7ac;border-radius:11px;background:linear-gradient(#ffe99e,#ffc65b);color:#38204f;font:800 14px var(--f-title);box-shadow:0 3px 0 #a46a30;cursor:pointer}
+#game .share button:hover{filter:brightness(1.07)}
+/* The how-to dialog must fit as a single page, including its action. */
+#title #howto{position:fixed;inset:0;padding:clamp(8px,1.5vh,16px);overflow:hidden;z-index:20}
+#title #howto .howto-card{box-sizing:border-box;width:min(670px,100%);max-height:calc(100dvh - 20px);height:auto;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:clamp(5px,1.3vh,11px);padding:clamp(12px,2.3vh,23px) clamp(14px,3vw,26px);border-radius:22px}
+#title #howto .howto-card .chip{font-size:clamp(16px,2.7vh,20px);padding:7px 16px}
+#title #howto .howto-heroes{gap:12px}
+#title #howto .hero{gap:4px;padding:clamp(6px,1vh,10px) 7px;border-radius:16px}
+#title #howto .hero img{height:clamp(48px,11vh,84px);max-width:100%;object-fit:contain}
+#title #howto .hero b{font-size:clamp(17px,2.8vh,22px)}
+#title #howto .hero small{font-size:clamp(11px,1.9vh,14px);line-height:1.25}
+#title #howto .hero span{display:flex;gap:3px}
+#title #howto kbd{font-size:clamp(10px,1.8vh,13px);padding:3px 6px}
+#title #howto .howto-rules{gap:0}
+#title #howto .howto-rules li{padding:clamp(3px,.8vh,7px) 0;gap:10px;font-size:clamp(12px,2vh,15px);line-height:1.3}
+#title #howto .howto-rules .ic{width:42px}
+#title #howto .howto-rules img{height:clamp(19px,3vh,25px)}
+#title #howto .howto-note{font-size:clamp(11px,1.7vh,13px);line-height:1.25}
+#title #howto #howto-close{width:min(240px,75%);min-height:clamp(36px,5vh,46px);font-size:clamp(16px,2.5vh,20px);padding:5px 12px;flex:none}
+@media(max-height:650px){#title #howto .howto-card{gap:4px;padding:9px 15px}#title #howto .hero img{height:44px}#title #howto .hero{gap:2px;padding:5px}#title #howto .howto-rules li{padding:2px 0}#title #howto .howto-note{font-size:11px}}
+@media(max-width:480px){#game .share{padding:13px;gap:10px}#game .share-room{font-size:10px;padding:6px}#game .share-top strong{font-size:17px}#game .share-bottom{flex-wrap:wrap}#game .share code{flex-basis:100%}#game .share button{width:100%}#title #howto .howto-card{padding:10px;gap:6px}#title #howto .howto-heroes{gap:6px}#title #howto .hero img{height:clamp(40px,9vh,65px)}#title #howto .hero small{font-size:11px}#title #howto .howto-rules li{font-size:12px}}
