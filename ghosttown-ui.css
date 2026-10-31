@@ -347,3 +347,15 @@ body{font-family:var(--f-body)}
 #game .share button{min-height:38px;padding:8px 12px;border:0;border-radius:9px;background:#b18af9;box-shadow:none;color:#1e1235;font:700 13px var(--f-title)}
 #game .share button:hover{background:#c6a7ff}
 @media(max-width:480px){#game .share{padding:12px}#game .share-bottom{flex-wrap:nowrap}#game .share code{flex-basis:auto}#game .share button{width:auto;white-space:nowrap}}
+
+
+/* V19: move invitation into the scene, closer to visual center. */
+#game .share{bottom:clamp(60px,15%,130px);width:min(390px,calc(100% - 28px));padding:14px 15px;border-radius:15px;background:#211637f5}
+#game .share-top{justify-content:space-between}
+#game .share-top strong{font-size:17px}
+#game .share-room{font-size:11px}
+#game .share-bottom{align-items:stretch}
+#game .share code{align-content:center}
+#game .share button{min-width:91px;min-height:40px;transition:background .15s ease}
+#game .share button:focus-visible{outline:2px solid #ffe5a0;outline-offset:3px}
+@media(max-height:600px){#game .share{bottom:8%;padding:10px 12px;gap:7px}}
