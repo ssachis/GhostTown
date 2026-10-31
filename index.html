@@ -37,6 +37,7 @@
   <section id="game" hidden>
     <div class="hud">
       <div class="hud-left">
+        <span id="hud-level" class="level-chip">Level 1</span>
         <span id="hud-room" class="room">Room <b id="hud-code">----</b></span>
         <span id="hud-role" class="tag"></span>
         <span id="hud-partner" class="partner"></span>
@@ -47,9 +48,21 @@
         <span class="pick-count pumpkin" title="Pumpkins"><i></i><b id="hud-pumpkin">0/0</b></span>
         <span id="hud-ping" class="ping"></span>
         <button id="music" class="icon-btn" title="Music (M)">♪</button>
+        <button id="pause" class="icon-btn" title="Pause (Esc)">❚❚</button>
       </div>
     </div>
-    <div class="stage"><canvas id="cv" width="816" height="600"></canvas></div>
+    <div class="stage">
+      <canvas id="cv" width="816" height="600"></canvas>
+      <div id="pause-menu" class="pause-menu" hidden>
+        <div class="pause-card">
+          <div class="chip">Paused</div>
+          <p id="pause-note" class="pause-note"></p>
+          <button id="resume" class="cta orange">Resume</button>
+          <button id="restart" class="cta blue">Restart level</button>
+          <button id="quit" class="cta ghostbtn wide">Main menu</button>
+        </div>
+      </div>
+    </div>
     <div id="share" class="share" hidden></div>
     <p id="keys" class="keys"></p>
   </section>

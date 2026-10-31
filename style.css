@@ -152,3 +152,28 @@ kbd {
   .hud { grid-template-columns: 1fr 1fr; }
   .hud-mid { order: -1; grid-column: 1 / -1; text-align: center; }
 }
+
+/* ---------- level chip + pause menu ---------- */
+.level-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  font: 400 15px Marcellus, Georgia, serif; color: #f3ecff;
+  padding: 4px 14px 5px; border-radius: 999px;
+  background: rgba(30,20,62,.9); border: 1.5px solid #6e5ab6;
+  box-shadow: 0 0 14px rgba(150,110,255,.15);
+}
+.level-chip::before { content: '✦'; color: #f5c56b; font-size: 12px; text-shadow: 0 0 8px rgba(245,197,107,.7); }
+.stage { position: relative; }
+.pause-menu {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(12,6,32,.62); backdrop-filter: blur(3px);
+}
+.pause-card {
+  width: min(300px, 80%); display: flex; flex-direction: column; gap: 12px; align-items: stretch; text-align: center;
+  background: linear-gradient(180deg, rgba(48,34,92,.97), rgba(30,21,62,.97));
+  border: 2px solid #5f4ca3; border-radius: 20px; padding: 22px 24px 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6), 0 0 50px rgba(150,110,255,.2);
+}
+.pause-card .chip { align-self: center; margin-bottom: 0; font-size: 17px; }
+.pause-note { margin: 0; color: #cbbdf0; font: 400 14px Marcellus, Georgia, serif; min-height: 0; }
+.pause-note:empty { display: none; }
+.cta.ghostbtn.wide { width: 100%; }

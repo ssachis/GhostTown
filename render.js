@@ -605,9 +605,54 @@
   }
 
   // ---------- characters ----------
-  // The boy, after the GhostTown sheets: fluffy wavy hair, big shiny eyes,
-  // cream hoodie with a purple hood/scarf, brown backpack, navy shorts, sneakers.
+  // The boy uses sprites cut from the GhostTown design sheets (assets/boy-*.png).
+  // Until they load, the hand-drawn version below stands in.
+  const BOY_IMG = {};
+  const BOY_H = { idle: 52, run: 47, jump: 50.5 };      // height in game pixels
+  const BOY_DX = { idle: 1, run: -2, jump: 0 };           // nudge so the body sits over the hitbox
+  if (typeof Image !== 'undefined') {
+    for (const k of Object.keys(BOY_H)) { const im = new Image(); im.src = 'assets/boy-' + k + '.png'; BOY_IMG[k] = im; }
+  }
+
   function drawBoy(c, p, t, isMe) {
+    const f = p.facing || 1;
+    const cx = p.x + PW / 2, by = p.y + PH;
+    if (!p.alive) return poof(c, cx, by - 16, t, '170,160,200');
+    const moving = Math.abs(p.vx) > 25 && p.grounded;
+    const frame = !p.grounded ? 'jump' : moving ? 'run' : 'idle';
+    const img = BOY_IMG[frame];
+    if (!img || !img.complete || !img.naturalWidth) return drawBoyVector(c, p, t, isMe);
+    if (p.grounded) { c.fillStyle = 'rgba(10,5,30,.32)'; c.beginPath(); c.ellipse(cx, by, 9.5, 2.3, 0, 0, 7); c.fill(); }
+    let h = BOY_H[frame], w = (h * img.naturalWidth) / img.naturalHeight;
+    let bob = 0, sy = 1, tilt = 0;
+    if (frame === 'run') { const ph = t * 15; bob = -Math.abs(Math.sin(ph)) * 2.2; sy = 1 + Math.sin(ph * 2) * 0.03; tilt = 0.04; }
+    else if (frame === 'idle') sy = 1 + Math.sin(t * 2.6) * 0.012;
+    else tilt = p.vy < 0 ? -0.05 : 0.04;
+    c.save();
+    c.translate(cx, by + bob); c.scale(f, 1); c.rotate(tilt);
+    const x0 = -w / 2 + BOY_DX[frame], hh = h * sy;
+    if (frame === 'run') {
+      // legs swing below the hip while the upper body stays put -> a real stride
+      const hip = hh * 0.6, sk = Math.sin(t * 15) * 0.42;
+      const srcHip = img.naturalHeight * 0.6;
+      c.save();
+      c.translate(0, -hh + hip); c.transform(1, 0, sk, 1, 0, 0);
+      c.drawImage(img, 0, srcHip - 1, img.naturalWidth, img.naturalHeight - srcHip + 1, x0, -1, w, hh - hip + 1);
+      c.restore();
+      c.drawImage(img, 0, 0, img.naturalWidth, srcHip + 1, x0, -hh, w, hip + 1);
+    } else {
+      c.drawImage(img, x0, -hh, w, hh);
+    }
+    c.restore();
+    // a little dust when running, like the sheet
+    if (frame === 'run' && Math.sin(t * 15) > 0.6) {
+      c.fillStyle = 'rgba(200,180,255,.25)';
+      c.beginPath(); c.arc(cx - f * 10, by - 2, 2.6, 0, 7); c.arc(cx - f * 13.5, by - 3.5, 1.8, 0, 7); c.fill();
+    }
+    if (isMe) marker(c, cx, p.y - 28, t, C.boy);
+  }
+
+  function drawBoyVector(c, p, t, isMe) {
     const f = p.facing || 1;
     const cx = p.x + PW / 2, by = p.y + PH;
     if (!p.alive) return poof(c, cx, by - 16, t, '170,160,200');

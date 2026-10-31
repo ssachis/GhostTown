@@ -9,7 +9,7 @@ A spooky two-player co-op platformer: a curly-haired boy and his ghost explore a
 ## Play
 - **One screen:** click **Play on one screen**. The Boy uses the arrow keys, the Ghost uses W A D.
 - **Two laptops:** Player 1 picks the Boy or the Ghost and clicks **Create room**, then sends the link (or the 4-letter code). Player 2 opens it and they're in. Each player can use arrows or WASD.
-- **R** restarts the level, **M** toggles the music.
+- **R** restarts the level, **M** toggles the music, **Esc** (or the ❚❚ button) opens the pause menu with Resume, Restart level and Main menu. Online, pausing pauses for both players.
 
 ## Rules
 - **Orange lava:** the Boy can wade through it; it melts the Ghost.
@@ -39,7 +39,7 @@ To test online mode on one machine, open two browser **windows** side by side. D
 ## Files
 - `index.html`, `style.css`: page and lobby
 - `client.js`: modes (same laptop / host / guest), networking, game loop
-- `render.js`: all the art, drawn with canvas shapes (no image files)
+- `render.js`: the art; the Boy's sprites in `assets/` are cut from the GhostTown design sheets, everything else is drawn with canvas shapes
 - `audio.js`: original music and sound effects, synthesized with Web Audio
 - `shared/game.js`: rules, physics and levels
 

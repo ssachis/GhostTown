@@ -41,6 +41,7 @@
     if (!S.mode || e.repeat) return;
     if (e.code === 'KeyR') requestRestart();
     if (e.code === 'KeyM') toggleMusic();
+    if (e.code === 'Escape' || e.code === 'KeyP') setPause(!S.world.held);
   });
   addEventListener('keyup', (e) => down.delete(e.code));
   addEventListener('pointerdown', () => Sound.unlock());
@@ -71,7 +72,7 @@
       if (S.mode) return;
       const t = now / 1000;
       c.clearRect(0, 0, 104, 96);
-      c.save(); c.translate(52 - 9 * 1.8, role === 'boy' ? 22 : 26); c.scale(1.8, 1.8);
+      c.save(); c.translate(52 - 9 * 1.8, role === 'boy' ? 28 : 26); c.scale(role === 'boy' ? 1.6 : 1.8, role === 'boy' ? 1.6 : 1.8);
       Art.drawPlayer(c, { role, x: 0, y: 0, vx: 0, facing: 1, alive: true, grounded: true }, t, false);
       c.restore();
       requestAnimationFrame(anim);
@@ -158,6 +159,8 @@
     if (m.t === 'input') {
       S.guestQueue.push({ s: m.s | 0, l: !!m.l, r: !!m.r, j: !!m.j });
       if (S.guestQueue.length > MAX_QUEUE) S.guestQueue.splice(0, S.guestQueue.length - MAX_QUEUE);
+    } else if (m.t === 'pause') {
+      if (S.world.status === 'playing' || !m.on) S.world.held = !!m.on;
     } else if (m.t === 'restart') {
       if (S.connected) G.resetLevel(S.world);
     } else if (m.t === 'ping') {
@@ -233,7 +236,7 @@
     if (levelChanged) staticLayer = Art.buildStatic(w, cv.width, cv.height);
     const me = w.players[S.role];
     S.pending = S.pending.filter((i) => i.s > s.p[S.role].ack);
-    if (w.status === 'playing' && me.alive) for (const i of S.pending) G.stepPlayer(me, i, w, DT);
+    if (w.status === 'playing' && !w.held && me.alive) for (const i of S.pending) G.stepPlayer(me, i, w, DT);
     const o = s.p[other(S.role)];
     S.buf.push({ t: performance.now(), x: o.x, y: o.y, pl: s.pl.slice() });
     if (S.buf.length > 30) S.buf.shift();
@@ -246,7 +249,7 @@
     S.pending.push(inp);
     if (S.pending.length > 120) S.pending.shift();
     const me = w.players[S.role];
-    if (w.status === 'playing' && me.alive) {
+    if (w.status === 'playing' && !w.held && me.alive) {
       G.stepPlayer(me, inp, w, DT);
       if (me.jumpedNow) Sound.play('jump');
     }
@@ -266,6 +269,27 @@
   function requestRestart() {
     if (S.mode === 'local' || S.mode === 'host') { if (S.connected) G.resetLevel(S.world); }
     else if (S.conn && S.conn.open) S.conn.send({ t: 'restart' });
+  }
+
+  // pause menu (Esc / P / the ❚❚ button); online it pauses for both players
+  function setPause(on) {
+    if (!S.mode) return;
+    if (on && S.world.status !== 'playing') return;
+    if (S.mode === 'guest') { if (S.conn && S.conn.open) S.conn.send({ t: 'pause', on }); }
+    else S.world.held = on;
+  }
+  $('pause').onclick = () => setPause(!S.world.held);
+  $('resume').onclick = () => setPause(false);
+  $('restart').onclick = () => { requestRestart(); };
+  $('quit').onclick = () => { location.href = location.pathname; };
+  let menuShown = false;
+  function pauseFrame() {
+    const show = !!S.world.held;
+    if (show === menuShown) return;
+    menuShown = show;
+    $('pause-menu').hidden = !show;
+    $('pause-note').textContent = S.mode === 'local' ? '' : 'Paused for both players';
+    down.clear();
   }
 
   function toggleMusic() {
@@ -288,8 +312,8 @@
     $('hud-role').textContent = online ? 'You are the ' + NAMES[S.role] : '';
     $('hud-role').className = 'tag ' + (S.role || 'ghost');
     $('keys').innerHTML = online
-      ? 'Move <kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd> · Jump <kbd>↑</kbd> <kbd>W</kbd> <kbd>Space</kbd> · Restart <kbd>R</kbd> · Music <kbd>M</kbd>'
-      : '<b>Boy</b> <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd> &nbsp;·&nbsp; <b>Ghost</b> <kbd>A</kbd><kbd>W</kbd><kbd>D</kbd> &nbsp;·&nbsp; Restart <kbd>R</kbd> · Music <kbd>M</kbd>';
+      ? 'Move <kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd> · Jump <kbd>↑</kbd> <kbd>W</kbd> <kbd>Space</kbd> · Restart <kbd>R</kbd> · Music <kbd>M</kbd> · Pause <kbd>Esc</kbd>'
+      : '<b>Boy</b> <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd> &nbsp;·&nbsp; <b>Ghost</b> <kbd>A</kbd><kbd>W</kbd><kbd>D</kbd> &nbsp;·&nbsp; Restart <kbd>R</kbd> · Music <kbd>M</kbd> · Pause <kbd>Esc</kbd>';
     if (S.mode === 'host') {
       const link = location.origin + location.pathname + '?room=' + S.code;
       $('share').innerHTML = 'Send this to your partner: <code>' + link + '</code> <button id="copy">Copy</button>';
@@ -316,6 +340,7 @@
     const str = [secs, nc, np, S.ping].join('|');
     if (str === lastHud) return;
     lastHud = str;
+    $('hud-level').textContent = 'Level ' + (w.levelIndex + 1);
     $('hud-time').textContent = Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
     $('hud-candy').textContent = nc + '/' + cand.length;
     $('hud-pumpkin').textContent = np + '/' + pump.length;
@@ -396,7 +421,7 @@
         acc -= DT;
       }
     }, 1000 / 120);
-    (function frame(now) { render(now / 1000); hudFrame(); sfxFrame(); requestAnimationFrame(frame); })(performance.now());
+    (function frame(now) { render(now / 1000); hudFrame(); sfxFrame(); pauseFrame(); requestAnimationFrame(frame); })(performance.now());
   }
 
   // ---------- overlays ----------

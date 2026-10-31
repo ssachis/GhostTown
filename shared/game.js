@@ -129,7 +129,7 @@
     const w = {
       levelIndex, name: L.name, cols: grid[0].length, rows: grid.length, decor: L.decor || {},
       grid, gems: [], buttons: [], levers: [], doors: {}, spawns: {},
-      platforms: [], players: {}, status: 'lobby', ticks: 0, deadTimer: 0, deadRole: null, deadCause: null,
+      platforms: [], players: {}, status: 'lobby', ticks: 0, deadTimer: 0, deadRole: null, deadCause: null, held: false,
     };
     for (let r = 0; r < grid.length; r++) {
       for (let c = 0; c < grid[r].length; c++) {
@@ -178,7 +178,7 @@
   function resetLevel(world, levelIndex) {
     const fresh = createWorld(levelIndex == null ? world.levelIndex : levelIndex);
     for (const k of ['levelIndex', 'name', 'cols', 'rows', 'grid', 'decor', 'spawns', 'gems', 'buttons', 'levers', 'doors', 'platforms', 'players']) world[k] = fresh[k];
-    world.ticks = 0; world.deadTimer = 0; world.deadRole = null; world.deadCause = null;
+    world.ticks = 0; world.deadTimer = 0; world.deadRole = null; world.deadCause = null; world.held = false;
     world.status = 'playing';
   }
 
@@ -254,7 +254,7 @@
   // One input step for one player: movement + the things only that player triggers.
   function stepPlayerFull(world, role, inp) {
     const p = world.players[role];
-    if (!p.alive) return;
+    if (!p.alive || world.held) return;
     const prevCx = p.x + PW / 2;
     stepPlayer(p, inp, world, DT);
     const r = pRect(p);
@@ -286,6 +286,7 @@
 
   // Once per tick, after both players moved: buttons, platforms, doors, win/death timers.
   function stepWorld(world) {
+    if (world.held) return; // paused from the pause menu
     if (world.status === 'dead') {
       if (--world.deadTimer <= 0) resetLevel(world);
       return;
@@ -336,7 +337,7 @@
       };
     }
     return {
-      t: 'state', lvl: world.levelIndex, st: world.status, tk: world.ticks, dr: world.deadRole, dc: world.deadCause, p,
+      t: 'state', lvl: world.levelIndex, st: world.status, hd: world.held ? 1 : 0, tk: world.ticks, dr: world.deadRole, dc: world.deadCause, p,
       pl: world.platforms.map((pl) => round(pl.kind === 'retract' ? pl.h : pl.y)),
       gm: world.gems.map((g) => (g.taken ? 1 : 0)).join(''),
       bt: world.buttons.map((b) => (b.pressed ? 1 : 0)).join(''),
@@ -346,7 +347,7 @@
 
   function applySnapshot(world, s) {
     if (s.lvl !== world.levelIndex) resetLevel(world, s.lvl);
-    world.status = s.st; world.ticks = s.tk; world.deadRole = s.dr; world.deadCause = s.dc;
+    world.status = s.st; world.held = !!s.hd; world.ticks = s.tk; world.deadRole = s.dr; world.deadCause = s.dc;
     world.platforms.forEach((pl, i) => { if (pl.kind === 'retract') pl.h = s.pl[i]; else pl.y = s.pl[i]; });
     world.gems.forEach((g, i) => { g.taken = s.gm[i] === '1'; });
     world.buttons.forEach((b, i) => { b.pressed = s.bt[i] === '1'; });
