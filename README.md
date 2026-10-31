@@ -7,7 +7,7 @@
 A spooky two-player co-op platformer: Andy, a curly-haired boy, and his ghost explore a haunted temple. Play **together on one laptop** or **online across two laptops** over a direct peer-to-peer connection. It's a static site (plain HTML/JS, no build step, no server), so it runs on GitHub Pages.
 
 ## Play
-- **One screen:** click **Play on one screen**. Andy uses the arrow keys, his Ghost uses W A D.
+- **One screen:** click **Single Screen**. Andy uses the arrow keys, his Ghost uses W A D.
 - **Two laptops:** Player 1 picks Andy or His Ghost and clicks **Create room**, then sends the link (or the 4-letter code). Player 2 opens it and they're in. Each player can use arrows or WASD.
 - **R** restarts the level, **M** toggles the music, **Esc** (or the ❚❚ button) opens the pause menu with Resume, Restart level and Main menu. Online, pausing pauses for both players.
 

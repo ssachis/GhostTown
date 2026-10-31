@@ -424,7 +424,7 @@
     const cx = LW / 2, cy = 150;
     ctx.fillStyle = 'rgba(30,20,62,.82)'; ctx.strokeStyle = '#6e5ab6'; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.roundRect(cx - 170, cy - 48, 340, 86, 20); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#f5c56b'; ctx.font = '700 15px Fredoka, sans-serif';
+    ctx.fillStyle = '#f5c56b'; ctx.font = '700 16px Tinos, "Times New Roman", serif';
     ctx.fillText('✦  Level ' + (w.levelIndex + 1) + '  ✦', cx, cy - 20);
     ctx.font = '400 34px "Bubblegum Sans", Fredoka, cursive'; ctx.fillStyle = '#fff7ea';
     ctx.shadowColor = '#a77bff'; ctx.shadowBlur = 16;
@@ -458,7 +458,7 @@
     ctx.fillText(title, LW / 2, LH / 2 - 6);
     ctx.shadowBlur = 0;
     if (sub) {
-      ctx.fillStyle = '#d6cbef'; ctx.font = '600 20px "Baloo 2", Fredoka, sans-serif';
+      ctx.fillStyle = '#d6cbef'; ctx.font = '400 21px Tinos, "Times New Roman", serif';
       sub.split('\n').forEach((line, i) => ctx.fillText(line, LW / 2, LH / 2 + 34 + i * 26));
     }
   }
