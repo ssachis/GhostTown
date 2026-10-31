@@ -28,7 +28,7 @@
     DECEL: 2800,        // ground braking
     AIR_ACCEL: 1700,
     AIR_DECEL: 1000,
-    JUMP: 545,          // take-off speed
+    JUMP: 500,          // take-off speed
     G_UP: 1450,         // gravity while rising with jump held
     G_CUT: 3400,        // gravity while rising after jump released (short hop)
     G_DOWN: 2000,       // gravity while falling
@@ -135,7 +135,7 @@
       for (let c = 0; c < grid[r].length; c++) {
         const ch = grid[r][c];
         const x = c * TILE, y = r * TILE;
-        if (ch === 'c' || ch === 'p') w.gems.push({ x: x + 4, y: y + 4, w: 16, h: 16, kind: ch === 'c' ? 'boy' : 'ghost', taken: false });
+        if (ch === 'c' || ch === 'p') w.gems.push({ x: x + 4, y: y + 4, w: 16, h: 16, kind: ch === 'c' ? 'boy' : 'ghost', taken: false, c, r });
         else if (ch === '1') w.spawns.boy = { x: x + 3, y: y + TILE - PH };
         else if (ch === '2') w.spawns.ghost = { x: x + 3, y: y + TILE - PH };
         else if (ch === 'D') w.doors.boy = { x: x - 6, y: y + TILE - 46, w: 36, h: 46, open: false };
@@ -145,6 +145,17 @@
         else continue;
         grid[r][c] = '.';
       }
+    }
+    // a treat sitting over a pit floats over the middle of that pit
+    for (const g of w.gems) {
+      const below = grid[g.r + 1] && grid[g.r + 1][g.c];
+      if (POOLS[below]) {
+        let c0 = g.c, c1 = g.c;
+        while (grid[g.r + 1][c0 - 1] === below) c0--;
+        while (grid[g.r + 1][c1 + 1] === below) c1++;
+        g.x = ((c0 + c1 + 1) / 2) * TILE - g.w / 2;
+      }
+      delete g.c; delete g.r;
     }
     for (const def of L.platforms) {
       const pl = Object.assign({}, def);

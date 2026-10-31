@@ -284,7 +284,8 @@
     $('hud-room').hidden = !online;
     $('hud-partner').hidden = !online;
     $('hud-code').textContent = S.code || '';
-    $('hud-role').textContent = online ? 'You are the ' + NAMES[S.role] : 'Same laptop';
+    $('hud-role').hidden = !online;
+    $('hud-role').textContent = online ? 'You are the ' + NAMES[S.role] : '';
     $('hud-role').className = 'tag ' + (S.role || 'ghost');
     $('keys').innerHTML = online
       ? 'Move <kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd> · Jump <kbd>↑</kbd> <kbd>W</kbd> <kbd>Space</kbd> · Restart <kbd>R</kbd> · Music <kbd>M</kbd>'
@@ -325,15 +326,61 @@
   let prev = null;
   function sfxFrame() {
     const w = S.world;
-    const cur = { st: w.status, gm: w.gems.map((g) => g.taken), lv: w.levers.map((l) => l.on), bt: w.buttons.map((b) => b.pressed) };
+    const cur = { st: w.status, gm: w.gems.map((g) => g.taken), lv: w.levers.map((l) => l.on), bt: w.buttons.map((b) => b.pressed), doors: { boy: w.doors.boy.open, ghost: w.doors.ghost.open } };
     if (prev && prev.gm.length === cur.gm.length) {
-      cur.gm.forEach((tk, i) => { if (tk && !prev.gm[i]) Sound.play(w.gems[i].kind === 'boy' ? 'candy' : 'pumpkin'); });
+      cur.gm.forEach((tk, i) => {
+        if (!tk || prev.gm[i]) return;
+        const g = w.gems[i];
+        Sound.play(g.kind === 'boy' ? 'candy' : 'pumpkin');
+        burst(g.x + g.w / 2, g.y + g.h / 2, g.kind === 'boy' ? ['#ffb347', '#ff7ad2', '#fff2c0'] : ['#ff9a2e', '#8fd8ff', '#ffffff'], 16);
+      });
+      ROLES.forEach((role) => {
+        const d = w.doors[role];
+        if (d.open && prev.doors && !prev.doors[role]) burst(d.x + d.w / 2, d.y + 18, role === 'boy' ? ['#ffd27a', '#ffb347'] : ['#a9e1ff', '#ffffff'], 12);
+      });
       if (cur.lv.some((v, i) => v !== prev.lv[i])) Sound.play('click');
       if (cur.bt.some((v, i) => v && !prev.bt[i])) Sound.play('click');
       if (cur.st !== prev.st && cur.st === 'dead') Sound.play('die');
       if (cur.st !== prev.st && cur.st === 'won') Sound.play('win');
     }
     prev = cur;
+  }
+
+  // little sparkle bursts (pickups, doors) — purely visual, per screen
+  const parts = [];
+  function burst(x, y, colors, n) {
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + Math.random() * 0.4, sp = 40 + Math.random() * 70;
+      parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 30, life: 0.6 + Math.random() * 0.3, max: 0.9, c: colors[i % colors.length], s: 1.5 + Math.random() * 1.8 });
+    }
+  }
+  let lastFrame = 0;
+  function drawParts(now) {
+    const dt = Math.min(0.05, (now - lastFrame) / 1000 || 0); lastFrame = now;
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      p.life -= dt; if (p.life <= 0) { parts.splice(i, 1); continue; }
+      p.vy += 120 * dt; p.x += p.vx * dt; p.y += p.vy * dt;
+      ctx.globalAlpha = Math.min(1, p.life / 0.4);
+      ctx.fillStyle = p.c;
+      ctx.beginPath(); ctx.moveTo(p.x, p.y - p.s * 1.6); ctx.lineTo(p.x + p.s * 0.5, p.y); ctx.lineTo(p.x, p.y + p.s * 1.6); ctx.lineTo(p.x - p.s * 0.5, p.y); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function titleCard(w) {
+    if (w.status !== 'playing' || w.ticks > 170) return;
+    const k = w.ticks, a = k < 25 ? k / 25 : k > 120 ? Math.max(0, (170 - k) / 50) : 1;
+    ctx.save(); ctx.globalAlpha = a; ctx.textAlign = 'center';
+    const cx = cv.width / 2, cy = 150;
+    ctx.fillStyle = 'rgba(30,20,62,.82)'; ctx.strokeStyle = '#6e5ab6'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.roundRect(cx - 170, cy - 48, 340, 86, 20); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#f5c56b'; ctx.font = '400 15px Marcellus, Georgia, serif';
+    ctx.fillText('✦  Level ' + (w.levelIndex + 1) + '  ✦', cx, cy - 20);
+    ctx.font = '400 30px Pacifico, cursive'; ctx.fillStyle = '#fff7ea';
+    ctx.shadowColor = '#a77bff'; ctx.shadowBlur = 16;
+    ctx.fillText(w.name, cx, cy + 20);
+    ctx.restore();
   }
 
   let staticLayer = null;
@@ -362,7 +409,7 @@
     ctx.fillText(title, cv.width / 2, cv.height / 2 - 6);
     ctx.shadowBlur = 0;
     if (sub) {
-      ctx.fillStyle = '#d6cbef'; ctx.font = '600 18px Fredoka, Inter, sans-serif';
+      ctx.fillStyle = '#d6cbef'; ctx.font = '400 19px Marcellus, Georgia, serif';
       sub.split('\n').forEach((line, i) => ctx.fillText(line, cv.width / 2, cv.height / 2 + 34 + i * 26));
     }
   }
@@ -383,6 +430,8 @@
     }
     if (S.mode !== 'local' && !S.connected) opts.hide = { [other(S.role)]: true };
     Art.drawFrame(ctx, w, staticLayer, t, opts);
+    drawParts(t * 1000);
+    if (S.mode === 'local' || S.connected) titleCard(w);
 
     if (S.mode !== 'local' && !S.connected) {
       overlay('Waiting for your partner…', S.mode === 'host' ? 'Room code  ' + S.code + '\nShare the link below' : 'The connection dropped. Reload to rejoin.');

@@ -5,15 +5,15 @@
 A spooky two-player co-op platformer: a curly-haired boy and his ghost explore a haunted temple. Play **together on one laptop** or **online across two laptops** over a direct peer-to-peer connection. It's a static site (plain HTML/JS, no build step, no server), so it runs on GitHub Pages.
 
 ## Play
-- **One laptop:** click **Play on one laptop**. The Boy uses the arrow keys, the Ghost uses W A D.
-- **Two laptops:** Player 1 picks the Boy or the Ghost and clicks **Create online room**, then sends the link (or the 4-letter code). Player 2 opens it and they're in. Each player can use arrows or WASD.
+- **One screen:** click **Play on one screen**. The Boy uses the arrow keys, the Ghost uses W A D.
+- **Two laptops:** Player 1 picks the Boy or the Ghost and clicks **Create room**, then sends the link (or the 4-letter code). Player 2 opens it and they're in. Each player can use arrows or WASD.
 - **R** restarts the level, **M** toggles the music.
 
 ## Rules
 - **Orange lava:** the Boy can wade through it; it melts the Ghost.
 - **Black hole:** the Ghost floats through it; it swallows the Boy.
 - **Witch's brew (green):** deadly to both.
-- The Boy collects **candy**, the Ghost collects **pumpkins**. Each treat floats right above a pool, so you have to wade through your own hazard to grab it.
+- The Boy collects **candy** (wrapped candy, lollipops, candy corn), the Ghost collects **pumpkins**. Each treat floats over the middle of a pit, so you have to wade through your own hazard to grab it.
 - Glowing **buttons** open the iron gate while someone stands on one. The **lever** raises the chain swing.
 - Both players standing in their own door (orange for the Boy, blue for the Ghost) clears the level. If anyone dies, the level restarts for both.
 

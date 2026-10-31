@@ -15,63 +15,93 @@ body {
     radial-gradient(circle at 85% 8%, rgba(255,240,200,.12) 0, transparent 22%),
     radial-gradient(ellipse at top, #2a1c48 0%, var(--bg) 70%);
   color: var(--text);
-  font-family: Fredoka, Inter, system-ui, sans-serif;
+  font-family: Fredoka, system-ui, sans-serif;
   display: flex; align-items: center; justify-content: center;
   min-height: 100vh; padding: 16px;
 }
 [hidden] { display: none !important; }
 button { font-family: inherit; }
 
-/* ---------- lobby ---------- */
+/* ---------- lobby (styled after the GhostTown sheets) ---------- */
 .panel {
-  width: min(460px, 100%);
-  background: linear-gradient(#251a3e, var(--panel));
-  border: 2px solid var(--edge);
-  border-radius: 16px;
-  padding: 26px 28px 22px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.6), 0 0 60px rgba(167,123,255,.12), inset 0 1px 0 rgba(255,255,255,.06);
+  width: min(470px, 100%);
+  background: linear-gradient(180deg, rgba(48,34,92,.96), rgba(30,21,62,.96));
+  border: 2px solid #5f4ca3;
+  border-radius: 22px;
+  padding: 26px 30px 24px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.6), 0 0 70px rgba(150,110,255,.16), inset 0 1px 0 rgba(255,255,255,.08);
   text-align: center;
 }
 h1 {
-  font-family: Pacifico, cursive; font-weight: 400; font-size: 54px; line-height: 1.25; margin: 0;
-  color: #fbf6ff; letter-spacing: 0;
-  text-shadow: 0 0 6px rgba(200,160,255,.9), 0 0 18px rgba(167,123,255,.8), 0 0 40px rgba(130,80,255,.55);
+  font-family: Pacifico, cursive; font-weight: 400; font-size: 56px; line-height: 1.2; margin: 0;
+  color: #fff7ea; letter-spacing: 0;
+  text-shadow: 0 0 6px rgba(255,230,190,.6), 0 0 18px rgba(167,123,255,.85), 0 0 42px rgba(130,80,255,.55);
 }
 h1 .o { width: 30px; height: 33px; vertical-align: 0; margin: 0 1px; filter: drop-shadow(0 0 8px rgba(180,200,255,.8)); }
 h1 span { margin-left: 8px; }
-.sub { color: var(--muted); margin: 8px 0 20px; font-size: 14px; }
-.pick { display: flex; gap: 14px; justify-content: center; margin-bottom: 18px; }
+.sub { font-family: Marcellus, Georgia, serif; color: #cbbdf0; margin: 4px 0 18px; font-size: 16px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: Marcellus, Georgia, serif; font-size: 15px; color: #f3ecff;
+  padding: 5px 16px 6px; border-radius: 999px;
+  background: rgba(30,20,62,.9); border: 1.5px solid #6e5ab6;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 0 14px rgba(150,110,255,.15);
+  margin-bottom: 12px;
+}
+.chip::before { content: '✦'; color: #f5c56b; text-shadow: 0 0 8px rgba(245,197,107,.7); font-size: 13px; }
+.pick { display: flex; gap: 14px; justify-content: center; margin-bottom: 20px; }
 .char {
-  background: #140e24; border: 2px solid var(--edge); border-radius: 14px;
-  padding: 8px 16px 10px; color: var(--text); cursor: pointer; width: 140px;
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: radial-gradient(circle at 50% 35%, #2c2058, #171030);
+  border: 2px solid #4e3d86; border-radius: 16px;
+  padding: 6px 14px 10px; color: var(--text); cursor: pointer; width: 148px;
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
   transition: transform .12s, border-color .12s, box-shadow .12s;
 }
-.char span { font-weight: 700; font-size: 16px; }
-.char small { color: var(--muted); font-size: 12px; }
+.char span { font-family: Marcellus, Georgia, serif; font-size: 19px; color: #fff4e4; }
+.char small { font-family: Marcellus, Georgia, serif; color: var(--muted); font-size: 13px; }
 .char:hover { transform: translateY(-2px); }
-.char.boy.selected { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,138,31,.2); }
-.char.ghost.selected { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(167,123,255,.25); }
+.char.boy.selected { border-color: #ffa94a; box-shadow: 0 0 0 3px rgba(255,150,50,.18), 0 0 26px rgba(255,150,50,.25); }
+.char.ghost.selected { border-color: #7fc8ff; box-shadow: 0 0 0 3px rgba(110,190,255,.2), 0 0 26px rgba(110,190,255,.28); }
+
 .cta {
-  width: 100%; padding: 12px; border-radius: 10px; border: 0; cursor: pointer;
-  background: linear-gradient(#ffa64a, #e26a0c); color: #2a1102;
-  font-weight: 700; font-size: 16px; box-shadow: 0 4px 0 #7a3405;
+  width: 100%; padding: 13px 14px 14px; border-radius: 14px; cursor: pointer;
+  font-family: Marcellus, Georgia, serif; font-size: 19px; letter-spacing: .3px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  border: 1.5px solid rgba(255,255,255,.35);
+  transition: transform .1s, filter .15s, box-shadow .15s;
 }
-.cta:active { transform: translateY(2px); box-shadow: 0 2px 0 #7a3405; }
+.cta::before { content: '✦'; font-size: 13px; opacity: .85; }
+.cta:hover { filter: brightness(1.07); transform: translateY(-1px); }
+.cta:active { transform: translateY(2px); }
 .cta:disabled { opacity: .5; cursor: wait; }
-.cta.alt { margin-top: 10px; background: linear-gradient(#b893ff, #7e52e6); color: #160a33; box-shadow: 0 4px 0 #3e2489; }
-.cta.alt:active { box-shadow: 0 2px 0 #3e2489; }
-.cta.ghostbtn { width: auto; padding: 12px 22px; background: transparent; color: var(--lav); border: 2px solid var(--purple); box-shadow: none; }
-.divider { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; margin: 20px 0 14px; }
-.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--edge); }
+.cta.orange {
+  background: linear-gradient(180deg, #ffc46b, #ff8a1f 55%, #e86a0a);
+  color: #3a1602;
+  box-shadow: 0 5px 0 #8a3c06, 0 0 26px rgba(255,150,40,.45), inset 0 2px 0 rgba(255,255,255,.45);
+}
+.cta.blue {
+  background: linear-gradient(180deg, #a6e4ff, #4fb6ff 55%, #2c86e6);
+  color: #082447;
+  box-shadow: 0 5px 0 #18528f, 0 0 26px rgba(80,180,255,.45), inset 0 2px 0 rgba(255,255,255,.45);
+}
+.cta.ghostbtn {
+  width: auto; padding: 11px 22px; font-size: 17px; color: #efe6ff;
+  background: rgba(30,20,62,.9); border: 1.5px solid #8a6ae6;
+  box-shadow: 0 0 18px rgba(150,110,255,.25);
+}
+.cta.ghostbtn::before { color: #f5c56b; }
+.divider { display: flex; align-items: center; gap: 12px; color: #b9aae3; font-family: Marcellus, Georgia, serif; font-size: 15px; margin: 12px 0; }
+.divider.wide { margin: 20px 0 14px; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #6e5ab6, transparent); }
 .join { display: flex; gap: 10px; }
 .join input {
-  flex: 1; min-width: 0; padding: 10px; border-radius: 10px; border: 2px solid var(--edge);
-  background: #140e24; color: var(--text); text-align: center;
-  font: 600 24px Fredoka, sans-serif; letter-spacing: 10px; text-transform: uppercase;
+  flex: 1; min-width: 0; padding: 10px; border-radius: 14px; border: 1.5px solid #5f4ca3;
+  background: rgba(16,10,36,.9); color: var(--text); text-align: center;
+  font: 400 24px Marcellus, Georgia, serif; letter-spacing: 12px; text-transform: uppercase;
 }
-.join input:focus { outline: none; border-color: var(--purple); }
-.err { color: #ff9a7a; min-height: 20px; font-size: 14px; margin: 12px 0 0; }
+.join input::placeholder { color: #6c5e9a; }
+.join input:focus { outline: none; border-color: #8a6ae6; box-shadow: 0 0 16px rgba(150,110,255,.3); }
+.err { color: #ffb08a; min-height: 20px; font-size: 14px; margin: 12px 0 0; font-family: Marcellus, Georgia, serif; }
 
 /* ---------- game ---------- */
 #game { width: min(920px, 100%); }
@@ -81,9 +111,9 @@ h1 span { margin-left: 8px; }
 }
 .hud-left { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .hud-right { display: flex; gap: 14px; justify-content: flex-end; align-items: center; }
-.hud-mid { font: 600 26px Fredoka, sans-serif; color: #fbf6ff; letter-spacing: 1px; text-shadow: 0 0 10px rgba(167,123,255,.8); }
+.hud-mid { font: 400 28px Marcellus, Georgia, serif; color: #fbf6ff; letter-spacing: 1px; text-shadow: 0 0 10px rgba(167,123,255,.8); }
 .room b { letter-spacing: 2px; color: var(--lav); }
-.tag { padding: 3px 10px; border-radius: 99px; font-weight: 600; font-size: 13px; }
+.tag { padding: 4px 12px; border-radius: 99px; font: 400 14px Marcellus, Georgia, serif; border: 1px solid currentColor; }
 .tag.boy { background: rgba(255,138,31,.15); color: var(--orange); }
 .tag.ghost { background: rgba(167,123,255,.18); color: var(--lav); }
 .partner.on { color: #9ff09a; }
