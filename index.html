@@ -8,19 +8,26 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261031p">
-  <link rel="stylesheet" href="ghosttown-ui.css?v=3">
+  <link rel="stylesheet" href="ghosttown-ui.css?v=4">
 </head>
 <body>
-  <!-- Title screen: the GhostTown key art, brought to life -->
+  <!-- Compact, animated title card using the actual game characters. -->
   <section id="title">
-    <div class="title-scene" id="title-scene">
-      <img class="title-art" id="title-art" src="assets/title.jpg" alt="GhostTown: Andy and his ghost in the haunted ruins">
-      <canvas id="title-fx" aria-hidden="true"></canvas>
-    </div>
-    <div class="title-actions">
-      <button id="play-game" class="cta yellow">Play Game</button>
-      <button id="how-to" class="cta purple">How to Play</button>
-    </div>
+    <main class="title-shell">
+      <h1 class="game-logo" aria-label="GhostTown"><span>Ghost</span><em>Town</em></h1>
+      <div class="title-scene" id="title-scene" aria-label="Andy and his ghost in a moonlit town">
+        <div class="title-moon" aria-hidden="true"></div>
+        <div class="title-hills far" aria-hidden="true"></div>
+        <div class="title-houses" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="title-hills near" aria-hidden="true"></div>
+        <div class="title-ground" aria-hidden="true"></div>
+        <canvas id="title-fx" width="640" height="380" aria-hidden="true"></canvas>
+      </div>
+      <div class="title-actions">
+        <button id="play-game" class="cta yellow">Play Game</button>
+        <button id="how-to" class="cta purple">How to Play</button>
+      </div>
+    </main>
 
     <div id="howto" class="modal" hidden>
       <div class="howto-card" role="dialog" aria-labelledby="howto-h">
@@ -140,6 +147,6 @@
   <script src="audio.js?v=20261031p"></script>
   <script src="render.js?v=20261031p"></script>
   <script src="client.js?v=20261031p"></script>
-  <script src="title.js?v=20261031p"></script>
+  <script src="title.js?v=20261031q"></script>
 </body>
 </html>
