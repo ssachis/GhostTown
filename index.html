@@ -7,7 +7,7 @@
   <meta name="description" content="A spooky two-player co-op platformer: Andy and his ghost. Play online across two laptops or together on one.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Tinos:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261031h">
+  <link rel="stylesheet" href="style.css?v=20261031i">
 </head>
 <body>
   <!-- Lobby: full-screen title screen over the painted night sky -->
@@ -85,14 +85,18 @@
         <button id="pause" class="tool" title="Pause (Esc)">❚❚</button>
         <button id="music" class="tool" title="Music (M)">♪</button>
         <button id="help-btn" class="tool" title="Instructions (H)">?</button>
+        <button id="fs-btn" class="tool" title="Full screen (F)" aria-label="Full screen">
+          <svg class="fs-in" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+          <svg class="fs-out" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>
+        </button>
       </div>
     </div>
   </section>
 
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-  <script src="shared/game.js?v=20261031h"></script>
-  <script src="audio.js?v=20261031h"></script>
-  <script src="render.js?v=20261031h"></script>
-  <script src="client.js?v=20261031h"></script>
+  <script src="shared/game.js?v=20261031i"></script>
+  <script src="audio.js?v=20261031i"></script>
+  <script src="render.js?v=20261031i"></script>
+  <script src="client.js?v=20261031i"></script>
 </body>
 </html>

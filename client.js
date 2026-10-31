@@ -45,6 +45,7 @@
     if (!S.mode || e.repeat) return;
     if (e.code === 'KeyR') requestRestart();
     if (e.code === 'KeyM') toggleMusic();
+    if (e.code === 'KeyF') toggleFullscreen();
     if (e.code === 'KeyH') setHelp(!helpOpen);
     else if (e.code === 'Escape' && helpOpen) setHelp(false);
     else if (e.code === 'Escape' || e.code === 'KeyP') setPause(!S.world.held);
@@ -301,6 +302,16 @@
     if (on) setPause(true); else setPause(false);
   }
   $('help-btn').onclick = () => setHelp(!helpOpen);
+  // full screen toggle (button or F)
+  function toggleFullscreen() {
+    const d = document, el = d.documentElement;
+    if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+    else (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+  }
+  $('fs-btn').onclick = toggleFullscreen;
+  const fsSync = () => $('fs-btn').classList.toggle('on', !!(document.fullscreenElement || document.webkitFullscreenElement));
+  document.addEventListener('fullscreenchange', fsSync);
+  document.addEventListener('webkitfullscreenchange', fsSync);
   $('help-close').onclick = () => setHelp(false);
   $('resume').onclick = () => setPause(false);
   $('restart').onclick = () => { requestRestart(); };
@@ -336,8 +347,8 @@
     $('hud-role').textContent = online ? 'You are ' + NAMES[S.role] : '';
     $('hud-role').className = 'tag ' + (S.role || 'ghost');
     $('keys').innerHTML = online
-      ? '<span class="k-title">Move</span><kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd><br><span class="k-title">Jump</span><kbd>↑</kbd> <kbd>W</kbd> <kbd>Space</kbd><br><span class="k-title">Keys</span>Restart <kbd>R</kbd> · Pause <kbd>Esc</kbd>'
-      : '<span class="k-title">Andy</span><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><br><span class="k-title">His Ghost</span><kbd>A</kbd><kbd>W</kbd><kbd>D</kbd><br><span class="k-title">Keys</span>Restart <kbd>R</kbd> · Pause <kbd>Esc</kbd>';
+      ? '<span class="k-title">Move</span><kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd><br><span class="k-title">Jump</span><kbd>↑</kbd> <kbd>W</kbd> <kbd>Space</kbd><br><span class="k-title">Keys</span>Restart <kbd>R</kbd> · Pause <kbd>Esc</kbd> · Full screen <kbd>F</kbd>'
+      : '<span class="k-title">Andy</span><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><br><span class="k-title">His Ghost</span><kbd>A</kbd><kbd>W</kbd><kbd>D</kbd><br><span class="k-title">Keys</span>Restart <kbd>R</kbd> · Pause <kbd>Esc</kbd> · Full screen <kbd>F</kbd>';
     if (S.mode === 'host') {
       const link = location.origin + location.pathname + '?room=' + S.code;
       $('share').innerHTML = 'Send this to your partner: <code>' + link + '</code> <button id="copy">Copy</button>';

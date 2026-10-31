@@ -255,3 +255,8 @@ kbd {
 .pause-note { margin: 0; color: #cbbdf0; font: 500 14px var(--f-body); min-height: 0; }
 .pause-note:empty { display: none; }
 .cta.ghostbtn.wide { width: 100%; }
+
+#fs-btn { display: inline-flex; align-items: center; justify-content: center; }
+#fs-btn .fs-out { display: none; }
+#fs-btn.on .fs-in { display: none; }
+#fs-btn.on .fs-out { display: block; }
