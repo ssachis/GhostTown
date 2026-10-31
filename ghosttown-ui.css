@@ -140,3 +140,19 @@ body{font-family:var(--f-body)}
 @media(max-height:680px){#title .title-shell{width:min(330px,100%);gap:10px}#title .game-logo{font-size:49px}#title .title-actions{gap:8px}#title .title-actions .cta{min-height:45px;font-size:20px}#title .title-actions .cta:nth-child(2){min-height:42px}}
 @media(max-width:450px){#title{padding:16px}#title .title-shell{gap:16px}#title .game-logo{font-size:clamp(45px,12vw,65px)}}
 @media(prefers-reduced-motion:reduce){#title .title-shell{animation:none}}
+
+
+/* V5: expressive logo, layered over the illustration instead of a plain heading */
+#title .title-shell{gap:0;padding-top:0}
+#title .game-logo{position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;margin:0 0 -30px;font-family:'Chewy',var(--f-title);font-weight:400;letter-spacing:1px;line-height:.84;white-space:normal;transform:rotate(-2deg);pointer-events:none;filter:drop-shadow(0 5px 0 #39245e) drop-shadow(0 9px 11px #120925a6)}
+#title .game-logo .logo-ghost{display:flex;align-items:center;justify-content:center;color:#f5e9ff;font-size:clamp(64px,13vw,88px);text-shadow:-2px -2px 0 #b99afa,2px 2px 0 #a47bd8,0 0 15px #c8a6ff7a}
+#title .game-logo .logo-town{display:block;color:#ffdda2;font-size:clamp(61px,12vw,82px);margin-top:-4px;margin-left:54px;text-shadow:-2px -2px 0 #ffe9c2,2px 3px 0 #bb74ac,0 0 16px #ffb9a277}
+#title .logo-ghost-icon{position:relative;display:inline-block;flex:none;width:.68em;height:.75em;margin:0 -.005em -.02em .01em;border-radius:50% 50% 17% 17%;background:linear-gradient(#fff,#e9d5ff);box-shadow:inset -5px -5px 0 #cfb1ed,0 0 9px #e6caff80;transform:rotate(3deg)}
+#title .logo-ghost-icon::after{content:"";position:absolute;bottom:-1px;left:0;width:100%;height:25%;background:linear-gradient(135deg,transparent 22%,#e9d5ff 23% 45%,transparent 46% 54%,#e9d5ff 55% 78%,transparent 79%);border-radius:0 0 40% 40%}
+#title .logo-ghost-icon i{position:absolute;top:37%;width:10%;height:16%;border-radius:50%;background:#51356e;z-index:1}
+#title .logo-ghost-icon i:first-child{left:33%}
+#title .logo-ghost-icon i:last-child{right:33%}
+#title .title-scene{margin-top:0}
+#title .title-actions{margin-top:24px}
+@media(max-width:450px){#title .game-logo{margin-bottom:-23px}#title .game-logo .logo-ghost{font-size:clamp(55px,15vw,76px)}#title .game-logo .logo-town{font-size:clamp(52px,14vw,72px)}#title .title-actions{margin-top:20px}}
+@media(max-height:680px){#title .game-logo .logo-ghost{font-size:54px}#title .game-logo .logo-town{font-size:51px}#title .game-logo{margin-bottom:-19px}#title .title-actions{margin-top:12px}}
