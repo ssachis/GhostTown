@@ -2,6 +2,8 @@
 
 <img width="1672" height="941" alt="Ghost Town Character and Level Concept Sheet (1)" src="https://github.com/user-attachments/assets/9e44e308-449a-49d6-8946-15551281e9f1" />
 
+
+
 A spooky two-player co-op platformer: a curly-haired boy and his ghost explore a haunted temple. Play **together on one laptop** or **online across two laptops** over a direct peer-to-peer connection. It's a static site (plain HTML/JS, no build step, no server), so it runs on GitHub Pages.
 
 ## Play
