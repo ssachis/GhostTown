@@ -39,26 +39,24 @@
 
   <!-- Game -->
   <section id="game" hidden>
+    <div class="hud">
+      <div class="hud-left">
+        <span id="hud-level" class="level-chip">Level 1</span>
+        <span id="hud-room" class="room">Room <b id="hud-code">----</b></span>
+        <span id="hud-role" class="tag"></span>
+        <span id="hud-partner" class="partner"></span>
+      </div>
+      <div class="hud-mid"><span id="hud-time">0:00</span></div>
+      <div class="hud-right">
+        <span class="pick-count candy" title="Candy"><i></i><b id="hud-candy">0/0</b></span>
+        <span class="pick-count pumpkin" title="Pumpkins"><i></i><b id="hud-pumpkin">0/0</b></span>
+        <span id="hud-ping" class="ping"></span>
+        <button id="music" class="icon-btn" title="Music (M)">♪</button>
+        <button id="pause" class="icon-btn" title="Pause (Esc)">❚❚</button>
+      </div>
+    </div>
     <div class="stage">
       <canvas id="cv" width="816" height="600"></canvas>
-      <div class="hud">
-        <div class="hud-left">
-          <span id="hud-level" class="level-chip">Level 1</span>
-          <span id="hud-room" class="room">Room <b id="hud-code">----</b></span>
-          <span id="hud-role" class="tag"></span>
-          <span id="hud-partner" class="partner"></span>
-        </div>
-        <div class="hud-mid"><span id="hud-time">0:00</span></div>
-        <div class="hud-right">
-          <span class="pick-count candy" title="Candy"><i></i><b id="hud-candy">0/0</b></span>
-          <span class="pick-count pumpkin" title="Pumpkins"><i></i><b id="hud-pumpkin">0/0</b></span>
-          <span id="hud-ping" class="ping"></span>
-          <button id="music" class="icon-btn" title="Music (M)">♪</button>
-          <button id="pause" class="icon-btn" title="Pause (Esc)">❚❚</button>
-        </div>
-      </div>
-      <div id="share" class="share" hidden></div>
-      <p id="keys" class="keys"></p>
       <div id="pause-menu" class="pause-menu" hidden>
         <div class="pause-card">
           <div class="chip">Paused</div>
@@ -69,6 +67,8 @@
         </div>
       </div>
     </div>
+    <div id="share" class="share" hidden></div>
+    <p id="keys" class="keys"></p>
   </section>
 
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>

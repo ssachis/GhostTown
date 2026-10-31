@@ -333,8 +333,6 @@
       $('copy').onclick = () => { navigator.clipboard.writeText(link); $('copy').textContent = 'Copied'; };
     }
     history.replaceState(null, '', location.pathname);
-    // the controls hint fades after a few seconds so the level has the whole screen
-    setTimeout(() => $('keys').classList.add('faded'), 7000);
     updateHud();
     if (online) setInterval(() => { if (S.conn && S.conn.open) S.conn.send({ t: 'ping', c: performance.now() }); }, 2000);
     startLoop();
@@ -423,7 +421,7 @@
     ctx.restore();
   }
 
-  let staticLayer = null, introStart = 0;
+  let staticLayer = null;
   function startLoop() {
     staticLayer = Art.buildStatic(S.world, LW, LH, RES);
     let last = performance.now(), acc = 0;
@@ -464,19 +462,6 @@
     const w = S.world;
     if (!staticLayer) return;
     ctx.setTransform(RES, 0, 0, RES, 0, 0);
-    // camera intro: start close on the two heroes, then glide out to the whole level
-    if (!introStart && w.status === 'playing') introStart = performance.now();
-    if (introStart) {
-      const k = Math.min(1, Math.max(0, (performance.now() - introStart - 350) / 1700));
-      const e = k * k * (3 - 2 * k), z = 1 + 1.15 * (1 - e);
-      if (z > 1.001) {
-        const a = w.players.boy, b = w.players.ghost;
-        const fx = (a.x + b.x) / 2 + 9, fy = (a.y + b.y) / 2 + 10;
-        const vw = LW / z, vh = LH / z;
-        const left = Math.min(Math.max(fx - vw / 2, 0), LW - vw), top = Math.min(Math.max(fy - vh / 2, 0), LH - vh);
-        ctx.setTransform(RES * z, 0, 0, RES * z, -left * RES * z, -top * RES * z);
-      }
-    }
     const opts = { me: S.mode === 'local' ? null : S.role };
     if (S.mode === 'guest') {
       const ip = interpolated();
@@ -485,7 +470,6 @@
     if (S.mode !== 'local' && !S.connected) opts.hide = { [other(S.role)]: true };
     Art.drawFrame(ctx, w, staticLayer, t, opts);
     drawParts(t * 1000);
-    ctx.setTransform(RES, 0, 0, RES, 0, 0);
     if (S.mode === 'local' || S.connected) titleCard(w);
 
     if (S.mode !== 'local' && !S.connected) {
