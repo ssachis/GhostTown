@@ -369,3 +369,9 @@ body{font-family:var(--f-body)}
 #game .share code{box-sizing:border-box;display:block;flex:1 1 0;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #game .share button{box-sizing:border-box;display:block;flex:0 0 auto;width:auto;max-width:45%;white-space:nowrap;padding:9px 12px;font-size:12px}
 @media(max-width:380px){#game .share{width:calc(100vw - 20px);max-width:calc(100vw - 20px);padding:11px}#game .share-top strong{font-size:15px}#game .share-room{font-size:10px}#game .share button{min-width:76px;padding:8px;font-size:11px}}
+
+
+/* V21: invite is a direct child of #game, outside .stage overflow:hidden. */
+#game>.share{position:fixed;left:50%;right:auto;top:auto;bottom:clamp(22px,13dvh,140px);transform:translateX(-50%);z-index:50;width:min(390px,calc(100vw - 32px));max-width:calc(100vw - 32px);overflow:hidden;box-sizing:border-box}
+#game>.share[hidden]{display:none!important}
+@media(max-height:650px){#game>.share{bottom:18px}}
