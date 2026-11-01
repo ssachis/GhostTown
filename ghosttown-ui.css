@@ -400,3 +400,7 @@ body{font-family:var(--f-body)}
 #game .share-code{gap:10px}
 #game .share-card{gap:12px;padding:14px 16px 16px}
 @media(max-height:650px){#game>.share{gap:18px}}
+
+/* V25: more air between the code tiles and the invite card */
+#game .share-card{margin-top:14px}
+@media(max-height:650px){#game .share-card{margin-top:10px}}

@@ -387,7 +387,7 @@
     const sh = $('share');
     if (sh.hidden) return;
     const r = cv.getBoundingClientRect();
-    sh.style.top = Math.round(r.top + (LH / 2 - 70) * r.height / LH) + 'px';
+    sh.style.top = Math.round(r.top + (LH / 2 - 78) * r.height / LH) + 'px';
   }
   addEventListener('resize', placeShare);
   document.addEventListener('fullscreenchange', () => setTimeout(placeShare, 50));
@@ -522,7 +522,7 @@
     if (S.mode === 'local' || S.connected) titleCard(w);
 
     if (S.mode !== 'local' && !S.connected) {
-      overlay(S.mode === 'host' ? 'Waiting for a friend…' : 'Connection lost', S.mode === 'host' ? '' : 'Reload to rejoin.', null, S.mode === 'host' ? -92 : 0);
+      overlay(S.mode === 'host' ? 'Waiting for a friend…' : 'Connection lost', S.mode === 'host' ? '' : 'Reload to rejoin.', null, S.mode === 'host' ? -100 : 0);
     } else if (w.status === 'dead') {
       const [msg, col] = DEATH[w.deadCause] || ['Oops!', '#fff'];
       overlay(msg, 'Trying again…', col);
