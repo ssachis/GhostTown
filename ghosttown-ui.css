@@ -404,3 +404,6 @@ body{font-family:var(--f-body)}
 /* V25: more air between the code tiles and the invite card */
 #game .share-card{margin-top:14px}
 @media(max-height:650px){#game .share-card{margin-top:10px}}
+
+/* V26: wider invite card so the full link fits */
+#game>.share{width:min(530px,calc(100vw - 32px))}
