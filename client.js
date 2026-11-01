@@ -355,7 +355,7 @@
       : '<span class="k-title">Andy</span><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><br><span class="k-title">His Ghost</span><kbd>A</kbd><kbd>W</kbd><kbd>D</kbd><br><span class="k-title">Keys</span>Restart <kbd>R</kbd> · Pause <kbd>Esc</kbd> · Full screen <kbd>F</kbd>';
     if (S.mode === 'host') {
       const link = location.origin + location.pathname + '?room=' + S.code;
-      $('share').innerHTML = '<div class="share-top"><span class="share-icon" aria-hidden="true">✦</span><div><strong>Invite your partner</strong><small>Send this link to play together</small></div><span class="share-room">Room ' + S.code + '</span></div><div class="share-bottom"><code id="invite-link"></code><button id="copy" type="button" aria-label="Copy invite link">Copy link</button></div>';
+      $('share').innerHTML = '<div class="share-code" role="group" aria-label="Room code ' + S.code + '"><small>Room code</small><div class="share-tiles">' + S.code.split('').map(c => '<b>' + c + '</b>').join('') + '</div></div><div class="share-card"><small>Friend types this code under <em>Join</em>, or send them the link</small><div class="share-bottom"><code id="invite-link"></code><button id="copy" type="button" aria-label="Copy invite link">Copy link</button></div></div>';
       $('invite-link').textContent = link;
       $('copy').onclick = async () => {
         try {
@@ -387,7 +387,7 @@
     const sh = $('share');
     if (sh.hidden) return;
     const r = cv.getBoundingClientRect();
-    sh.style.top = Math.round(r.top + (LH / 2 - 50) * r.height / LH) + 'px';
+    sh.style.top = Math.round(r.top + (LH / 2 - 62) * r.height / LH) + 'px';
   }
   addEventListener('resize', placeShare);
   document.addEventListener('fullscreenchange', () => setTimeout(placeShare, 50));
@@ -522,7 +522,7 @@
     if (S.mode === 'local' || S.connected) titleCard(w);
 
     if (S.mode !== 'local' && !S.connected) {
-      overlay(S.mode === 'host' ? 'Waiting for a friend…' : 'Connection lost', S.mode === 'host' ? '' : 'Reload to rejoin.', null, S.mode === 'host' ? -70 : 0);
+      overlay(S.mode === 'host' ? 'Waiting for a friend…' : 'Connection lost', S.mode === 'host' ? '' : 'Reload to rejoin.', null, S.mode === 'host' ? -80 : 0);
     } else if (w.status === 'dead') {
       const [msg, col] = DEATH[w.deadCause] || ['Oops!', '#fff'];
       overlay(msg, 'Trying again…', col);
