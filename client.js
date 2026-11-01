@@ -380,7 +380,17 @@
     $('hud-partner').textContent = S.connected ? '● Partner connected' : '○ Waiting for partner';
     $('hud-partner').className = 'partner ' + (S.connected ? 'on' : 'off');
     $('share').hidden = S.mode !== 'host' || S.connected;
+    placeShare();
   }
+  // Pin the invite card just under the canvas "Waiting for a friend…" line, whatever the stage scale.
+  function placeShare() {
+    const sh = $('share');
+    if (sh.hidden) return;
+    const r = cv.getBoundingClientRect();
+    sh.style.top = Math.round(r.top + (LH / 2 - 50) * r.height / LH) + 'px';
+  }
+  addEventListener('resize', placeShare);
+  document.addEventListener('fullscreenchange', () => setTimeout(placeShare, 50));
 
   let lastHud = '';
   function hudFrame() {
