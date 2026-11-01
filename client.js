@@ -476,13 +476,14 @@
   }
 
   // ---------- overlays ----------
-  function overlay(title, sub, color) {
+  function overlay(title, sub, color, dy) {
+    dy = dy || 0;
     ctx.fillStyle = 'rgba(12,6,32,.68)'; ctx.fillRect(0, 0, LW, LH);
     ctx.textAlign = 'center';
     ctx.font = '400 34px "Bubblegum Sans", Fredoka, cursive';
     ctx.fillStyle = color || '#f3e9ff';
     ctx.shadowColor = color || '#a77bff'; ctx.shadowBlur = 18;
-    ctx.fillText(title, LW / 2, LH / 2 - 6);
+    ctx.fillText(title, LW / 2, LH / 2 - 6 + dy);
     ctx.shadowBlur = 0;
     if (sub) {
       ctx.fillStyle = '#d6cbef'; ctx.font = '400 21px Tinos, "Times New Roman", serif';
@@ -511,7 +512,7 @@
     if (S.mode === 'local' || S.connected) titleCard(w);
 
     if (S.mode !== 'local' && !S.connected) {
-      overlay(S.mode === 'host' ? 'Waiting for a friend…' : 'Connection lost', S.mode === 'host' ? '' : 'Reload to rejoin.');
+      overlay(S.mode === 'host' ? 'Waiting for a friend…' : 'Connection lost', S.mode === 'host' ? '' : 'Reload to rejoin.', null, S.mode === 'host' ? -70 : 0);
     } else if (w.status === 'dead') {
       const [msg, col] = DEATH[w.deadCause] || ['Oops!', '#fff'];
       overlay(msg, 'Trying again…', col);
