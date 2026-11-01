@@ -394,3 +394,9 @@ body{font-family:var(--f-body)}
 #game .share-card em{font-style:normal;color:#ffe0a0;font-weight:700}
 @media(max-height:650px){#game>.share{gap:12px}#game .share-tiles b{width:42px;height:48px;font-size:28px}}
 @media(prefers-reduced-motion:reduce){#game .share-tiles b{animation:none}}
+
+/* V24: even rhythm: title -> code -> card */
+#game>.share{gap:28px}
+#game .share-code{gap:10px}
+#game .share-card{gap:12px;padding:14px 16px 16px}
+@media(max-height:650px){#game>.share{gap:18px}}
