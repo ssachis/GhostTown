@@ -655,10 +655,11 @@
         for (const bx of [gx + 2, gx + gw / 2, gx + gw - 2]) { c.beginPath(); c.arc(bx, y + 2, 1.2, 0, 7); c.fill(); }
       }
     } else if (ready('swing') && ready('chain')) {
+      const top = pl.chainTop || TILE; // where the chains hang from
       for (const cx of [pl.x + 13, pl.x + pl.w - 13]) {
         const im = SPR.chain, cw = 7, chh = cw * im.naturalHeight / im.naturalWidth;
-        c.save(); c.beginPath(); c.rect(cx - 6, TILE, 12, v - TILE); c.clip();
-        for (let y = v - 4; y > TILE - chh; y -= chh - 1) c.drawImage(im, cx - cw / 2, y - chh, cw, chh);
+        c.save(); c.beginPath(); c.rect(cx - 6, top, 12, v - top); c.clip();
+        for (let y = v - 4; y > top - chh; y -= chh - 1) c.drawImage(im, cx - cw / 2, y - chh, cw, chh);
         c.restore();
       }
       c.drawImage(SPR.swing, pl.x - 3, v - 8, pl.w + 6, 24);
@@ -666,7 +667,7 @@
       // wooden swing on chains
       c.strokeStyle = '#a89ab8'; c.lineWidth = 1.5;
       for (const cx of [pl.x + 10, pl.x + pl.w - 10]) {
-        for (let y = TILE; y < v; y += 6) { c.beginPath(); c.ellipse(cx, y + 3, 1.8, 3, 0, 0, 7); c.stroke(); }
+        for (let y = pl.chainTop || TILE; y < v; y += 6) { c.beginPath(); c.ellipse(cx, y + 3, 1.8, 3, 0, 0, 7); c.stroke(); }
       }
       c.fillStyle = '#9a5f2e'; rr(c, pl.x, v, pl.w, pl.h, 3); c.fill();
       c.fillStyle = '#c98244'; c.fillRect(pl.x + 2, v, pl.w - 4, 3);
