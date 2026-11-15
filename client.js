@@ -44,6 +44,7 @@
     if (GAME_KEYS.has(e.code)) { down.add(e.code); if (S.mode) e.preventDefault(); }
     if (!S.mode || e.repeat) return;
     if (e.code === 'KeyR') requestRestart();
+    if (e.code === 'Enter' || e.code === 'KeyN') requestNext();
     if (e.code === 'KeyM') toggleMusic();
     if (e.code === 'KeyF') toggleFullscreen();
     if (e.code === 'KeyH') setHelp(!helpOpen);
@@ -79,7 +80,7 @@
       if (S.mode) return;
       const t = now / 1000;
       c.clearRect(0, 0, 240, 208);
-      c.save(); c.scale(2, 2); c.translate(60 - 9 * (role === 'boy' ? 1.85 : 1.7), role === 'boy' ? 31 : 26); c.scale(role === 'boy' ? 1.85 : 1.7, role === 'boy' ? 1.85 : 1.7);
+      c.save(); c.scale(2, 2); c.translate(60 - 9 * (role === 'boy' ? 1.9425 : 1.7), role === 'boy' ? 31 : 26); c.scale(role === 'boy' ? 1.9425 : 1.7, role === 'boy' ? 1.9425 : 1.7);
       Art.drawPlayer(c, { role, x: 0, y: 0, vx: 0, facing: 1, alive: true, grounded: true }, t, false);
       c.restore();
       requestAnimationFrame(anim);
@@ -108,6 +109,8 @@
   $('code').addEventListener('input', (e) => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
 
   const params = new URLSearchParams(location.search);
+  // ?level=2 starts on that level (handy for testing); online, the host's level wins
+  const START = Math.max(0, Math.min(G.LEVELS.length - 1, (parseInt(params.get('level'), 10) || 1) - 1));
   if (params.get('room')) { $('title').hidden = true; $('lobby').hidden = false; }
   if (params.get('room')) { $('code').value = params.get('room').toUpperCase(); join(params.get('room')); }
 
@@ -124,7 +127,7 @@
   // ---------- same laptop ----------
   function startLocal() {
     S.mode = 'local'; S.role = null; S.connected = true;
-    S.world = G.createWorld(0);
+    S.world = G.createWorld(START);
     G.resetLevel(S.world);
     enterGame();
   }
@@ -146,7 +149,7 @@
     const peer = new Peer(PEER_PREFIX + code);
     peer.on('open', () => {
       S.peer = peer; S.mode = 'host'; S.role = role; S.code = code;
-      S.world = G.createWorld(0);
+      S.world = G.createWorld(START);
       S.world.status = 'paused';
       enterGame();
     });
@@ -183,6 +186,8 @@
       if (S.world.status === 'playing' || !m.on) S.world.held = !!m.on;
     } else if (m.t === 'restart') {
       if (S.connected) G.resetLevel(S.world);
+    } else if (m.t === 'next') {
+      nextLevel();
     } else if (m.t === 'ping') {
       S.conn.send({ t: 'pong', c: m.c });
     } else if (m.t === 'pong') {
@@ -253,7 +258,7 @@
     const w = S.world;
     const levelChanged = s.lvl !== w.levelIndex;
     G.applySnapshot(w, s);
-    if (levelChanged) staticLayer = Art.buildStatic(w, LW, LH, RES);
+    if (levelChanged) { staticLayer = Art.buildStatic(w, LW, LH, RES); staticFor = w.levelIndex; S.buf = []; }
     const me = w.players[S.role];
     S.pending = S.pending.filter((i) => i.s > s.p[S.role].ack);
     if (w.status === 'playing' && !w.held && me.alive) for (const i of S.pending) G.stepPlayer(me, i, w, DT);
@@ -290,6 +295,19 @@
     if (S.mode === 'local' || S.mode === 'host') { if (S.connected) G.resetLevel(S.world); }
     else if (S.conn && S.conn.open) S.conn.send({ t: 'restart' });
   }
+
+  // after a level is cleared: Enter / N / a click moves both players to the next one
+  const hasNext = (w) => w.levelIndex + 1 < G.LEVELS.length;
+  function nextLevel() {
+    const w = S.world;
+    if (w.status === 'won' && hasNext(w) && S.connected) G.resetLevel(w, w.levelIndex + 1);
+  }
+  function requestNext() {
+    if (S.world.status !== 'won') return;
+    if (S.mode === 'local' || S.mode === 'host') nextLevel();
+    else if (S.conn && S.conn.open) S.conn.send({ t: 'next' });
+  }
+  cv.addEventListener('click', requestNext);
 
   // pause menu (Esc / P / the ❚❚ button); online it pauses for both players
   function setPause(on) {
@@ -355,8 +373,20 @@
       : '<span class="k-title">Andy</span><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><br><span class="k-title">His Ghost</span><kbd>A</kbd><kbd>W</kbd><kbd>D</kbd><br><span class="k-title">Keys</span>Restart <kbd>R</kbd> · Pause <kbd>Esc</kbd> · Full screen <kbd>F</kbd>';
     if (S.mode === 'host') {
       const link = location.origin + location.pathname + '?room=' + S.code;
-      $('share').innerHTML = 'Send this to your partner: <code>' + link + '</code> <button id="copy">Copy</button>';
-      $('copy').onclick = () => { navigator.clipboard.writeText(link); $('copy').textContent = 'Copied'; };
+      $('share').innerHTML = '<div class="share-code" role="group" aria-label="Room code ' + S.code + '"><small>Room code</small><div class="share-tiles">' + S.code.split('').map(c => '<b>' + c + '</b>').join('') + '</div></div><div class="share-card"><small>Friend types this code under <em>Join</em>, or send them the link</small><div class="share-bottom"><code id="invite-link"></code><button id="copy" type="button" aria-label="Copy invite link">Copy link</button></div></div>';
+      $('invite-link').textContent = link;
+      $('copy').onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(link);
+          $('copy').textContent = '✓ Copied!';
+        } catch (err) {
+          const range = document.createRange();
+          range.selectNodeContents($('invite-link'));
+          const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+          $('copy').textContent = 'Copy manually';
+          $('copy').title = 'Link selected — press Ctrl+C or Cmd+C to copy';
+        }
+      };
     }
     history.replaceState(null, '', location.pathname);
     updateHud();
@@ -368,7 +398,17 @@
     $('hud-partner').textContent = S.connected ? '● Partner connected' : '○ Waiting for partner';
     $('hud-partner').className = 'partner ' + (S.connected ? 'on' : 'off');
     $('share').hidden = S.mode !== 'host' || S.connected;
+    placeShare();
   }
+  // Pin the invite card just under the canvas "Waiting for a friend…" line, whatever the stage scale.
+  function placeShare() {
+    const sh = $('share');
+    if (sh.hidden) return;
+    const r = cv.getBoundingClientRect();
+    sh.style.top = Math.round(r.top + (LH / 2 - 78) * r.height / LH) + 'px';
+  }
+  addEventListener('resize', placeShare);
+  document.addEventListener('fullscreenchange', () => setTimeout(placeShare, 50));
 
   let lastHud = '';
   function hudFrame() {
@@ -376,7 +416,7 @@
     const secs = Math.floor(w.ticks / 60);
     const cand = w.gems.filter((g) => g.kind === 'boy'), pump = w.gems.filter((g) => g.kind === 'ghost');
     const nc = cand.filter((g) => g.taken).length, np = pump.filter((g) => g.taken).length;
-    const str = [secs, nc, np, S.ping].join('|');
+    const str = [w.levelIndex, secs, nc, np, S.ping].join('|');
     if (str === lastHud) return;
     lastHud = str;
     $('hud-level').textContent = 'Level ' + (w.levelIndex + 1);
@@ -447,9 +487,9 @@
     ctx.restore();
   }
 
-  let staticLayer = null;
+  let staticLayer = null, staticFor = -1;
   function startLoop() {
-    staticLayer = Art.buildStatic(S.world, LW, LH, RES);
+    staticLayer = Art.buildStatic(S.world, LW, LH, RES); staticFor = S.world.levelIndex;
     let last = performance.now(), acc = 0;
     setInterval(() => {
       const now = performance.now();
@@ -464,13 +504,14 @@
   }
 
   // ---------- overlays ----------
-  function overlay(title, sub, color) {
+  function overlay(title, sub, color, dy) {
+    dy = dy || 0;
     ctx.fillStyle = 'rgba(12,6,32,.68)'; ctx.fillRect(0, 0, LW, LH);
     ctx.textAlign = 'center';
-    ctx.font = '400 50px "Bubblegum Sans", Fredoka, cursive';
+    ctx.font = '400 34px "Bubblegum Sans", Fredoka, cursive';
     ctx.fillStyle = color || '#f3e9ff';
     ctx.shadowColor = color || '#a77bff'; ctx.shadowBlur = 18;
-    ctx.fillText(title, LW / 2, LH / 2 - 6);
+    ctx.fillText(title, LW / 2, LH / 2 - 6 + dy);
     ctx.shadowBlur = 0;
     if (sub) {
       ctx.fillStyle = '#d6cbef'; ctx.font = '400 21px Tinos, "Times New Roman", serif';
@@ -487,6 +528,7 @@
   function render(t) {
     const w = S.world;
     if (!staticLayer) return;
+    if (staticFor !== w.levelIndex) { staticLayer = Art.buildStatic(w, LW, LH, RES); staticFor = w.levelIndex; }
     ctx.setTransform(RES, 0, 0, RES, 0, 0);
     const opts = { me: S.mode === 'local' ? null : S.role };
     if (S.mode === 'guest') {
@@ -499,13 +541,14 @@
     if (S.mode === 'local' || S.connected) titleCard(w);
 
     if (S.mode !== 'local' && !S.connected) {
-      overlay('Waiting for your partner…', S.mode === 'host' ? 'Room code  ' + S.code + '\nShare the link below' : 'The connection dropped. Reload to rejoin.');
+      overlay(S.mode === 'host' ? 'Waiting for a friend…' : 'Connection lost', S.mode === 'host' ? '' : 'Reload to rejoin.', null, S.mode === 'host' ? -100 : 0);
     } else if (w.status === 'dead') {
       const [msg, col] = DEATH[w.deadCause] || ['Oops!', '#fff'];
       overlay(msg, 'Trying again…', col);
     } else if (w.status === 'won') {
       const got = w.gems.filter((g) => g.taken).length;
-      overlay('Level cleared!', `Treats ${got}/${w.gems.length}\nPress R to play again`, '#ffd27a');
+      if (hasNext(w)) overlay('Level cleared!', `Treats ${got}/${w.gems.length}\nPress Enter for the next level · R to replay`, '#ffd27a');
+      else overlay('You escaped GhostTown!', `Treats ${got}/${w.gems.length}\nPress R to play this level again`, '#ffd27a');
     }
   }
 })();
