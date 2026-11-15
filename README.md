@@ -9,7 +9,11 @@ A spooky two-player co-op platformer: Andy, a curly-haired boy, and his ghost ex
 ## Play
 - **One screen:** click **Single Screen**. Andy uses the arrow keys, his Ghost uses W A D.
 - **Two laptops:** Player 1 picks Andy or His Ghost and clicks **Create room**, then sends the link (or the 4-letter code). Player 2 opens it and they're in. Each player can use arrows or WASD.
-- **R** restarts the level, **M** toggles the music, **Esc** (or the ❚❚ button) opens the pause menu with Resume, Restart level and Main menu. Online, pausing pauses for both players.
+- **Enter** (or a click) after clearing a level moves both players on to the next one. **R** restarts the level, **M** toggles the music, **Esc** (or the ❚❚ button) opens the pause menu with Resume, Restart level and Main menu. Online, pausing pauses for both players.
+
+## Levels
+1. **The Haunted Hall**: hold the button to open the gate, pull the lever to raise the swing.
+2. **The Haunted Hotel**: the pair splits up on floor 2. One holds the button so the other can slip past the gate, then the one who got through pulls the lever to lift the other up on the chain swing. On the top floor the corridors split: Andy wades the lava below while his Ghost floats through the black hole on the ledge above.
 
 ## Rules
 - **Orange lava:** Andy can wade through it; it melts his Ghost.
@@ -44,4 +48,6 @@ To test online mode on one machine, open two browser **windows** side by side. D
 - `shared/game.js`: rules, physics and levels
 
 ## Editing levels
-Levels are ASCII maps in `shared/game.js` (34×25 tiles; the legend is at the top of the file). Gates and lifts go in each level's `platforms` list, lanterns, banners, candles and graves in `decor`. Add more entries to `LEVELS` for levels 2 and 3.
+Levels are ASCII maps in `shared/game.js` (34×25 tiles; the legend is at the top of the file). Gates and lifts go in each level's `platforms` list (a lift's `chainTop` sets where its chains hang from), lanterns, banners, candles and graves in `decor`. Add more entries to `LEVELS` for the next levels; the game moves on to them automatically.
+
+Open `?level=2` to start straight on a level while testing (for example `http://localhost:8000/?level=2`). Online, the host's level is the one both players play.

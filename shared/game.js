@@ -13,6 +13,7 @@
  *   D  Boy's exit door          E  Ghost's exit door
  *   o  pressure button          l  lever
  * Moving parts (gates, lifts) live in each level's `platforms`; torches in `decor`.
+ * A lift's optional `chainTop` (px) is where its chains hang from; default is the top of the screen.
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
@@ -86,6 +87,54 @@
         banners: [[13, 19], [21, 14], [12, 9], [23, 1]],
         candles: [[22, 22], [8, 17], [30, 12], [9, 7]],
         graves: [[19, 22], [24, 12]],
+      },
+    },
+    {
+      // Two ideas on top of level 1:
+      //  * floor 2 splits the pair: one holds the button so the other can slip
+      //    past the gate, then the one who got through pulls the lever to lift
+      //    the one left behind up the chain swing;
+      //  * the top floor splits into two corridors: Andy wades the lava below,
+      //    his Ghost floats through the black hole on the ledge above.
+      name: 'The Haunted Hotel',
+      map: [
+        '##################################',
+        '#................................#',
+        '#................................#',
+        '#................................#',
+        '#..............p......p.......E..#',
+        '#...........#######VVVVVVV########',
+        '#................................#',
+        '#.............c......c........D..#',
+        '#....#############LLLLLLL#########',
+        '#................................#',
+        '#................................#',
+        '#####............................#',
+        '#####p...............c...........#',
+        '#####VV###...###GG###LL##....#####',
+        '#................................#',
+        '#................................#',
+        '#.........###....................#',
+        '#..l......###.c.....o.p..........#',
+        '##############LL######VV######...#',
+        '#................................#',
+        '#................................#',
+        '#.............................####',
+        '#.1.2...c...p...........p.c...####',
+        '########LL##VV###GG###############',
+        '##################################',
+      ],
+      platforms: [
+        // Iron gate on floor 2: retracts while the button is pressed.
+        { id: 'gate', kind: 'retract', trigger: 'button', x: 17 * TILE + 6, y: 14 * TILE, w: 12, closedH: 96, openH: 0, speed: 320 },
+        // Chain swing on the right: carries whoever stayed behind up to floor 3 while the lever points right.
+        { id: 'lift', kind: 'move', trigger: 'lever', x: 25 * TILE, w: 96, h: 12, downY: 18 * TILE - 12, upY: 13 * TILE, speed: 70, chainTop: 9 * TILE },
+      ],
+      decor: {
+        lanterns: [[6, 20], [20, 20], [27, 20], [5, 15], [15, 15], [13, 10], [23, 10], [7, 3], [9, 2], [27, 2]],
+        banners: [[11, 19], [24, 19], [14, 14], [22, 14], [10, 9], [17, 1], [15, 6]],
+        candles: [[15, 22], [5, 17], [23, 12], [8, 7]],
+        graves: [[21, 22], [13, 12]],
       },
     },
   ];
@@ -179,6 +228,7 @@
     const fresh = createWorld(levelIndex == null ? world.levelIndex : levelIndex);
     for (const k of ['levelIndex', 'name', 'cols', 'rows', 'grid', 'decor', 'spawns', 'gems', 'buttons', 'levers', 'doors', 'platforms', 'players']) world[k] = fresh[k];
     world.ticks = 0; world.deadTimer = 0; world.deadRole = null; world.deadCause = null; world.held = false;
+    delete world._spiders; // the renderer's cached spiders belong to the old map
     world.status = 'playing';
   }
 
